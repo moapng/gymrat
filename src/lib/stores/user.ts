@@ -11,7 +11,6 @@ export const login = async () => {
 	const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'github'
 	});
-	console.log(data);
 };
 
 export const logout = async () => {

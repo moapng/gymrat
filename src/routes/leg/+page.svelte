@@ -5,7 +5,6 @@
 
 	export let data: PageData;
 	const exercises: Writable<Exercise[]> = writable(data.exercises);
-    $:console.log(data)
 </script>
 
 

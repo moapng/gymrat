@@ -8,14 +8,13 @@
 	import type { User } from '@supabase/supabase-js';
 
 	const handleClick = (active_day: ActiveDay) => {
-		goto(`/${active_day}`);
+		goto(`/gymrat/${active_day}`);
 	};
 
 	const current_user: Writable<User> = writable();
 	user.subscribe((user) => {
 		current_user.set(user as User);
 	});
-
 </script>
 
 <div class="app">

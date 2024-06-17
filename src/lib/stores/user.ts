@@ -1,5 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import { base } from '$app/paths';
 
 export const user = writable();
 
@@ -9,7 +10,10 @@ supabase.auth.onAuthStateChange((event, session) => {
 
 export const login = async () => {
 	const { data, error } = await supabase.auth.signInWithOAuth({
-		provider: 'github'
+		provider: 'github',
+		options: {
+			redirectTo: window.location.href + base
+		}
 	});
 };
 

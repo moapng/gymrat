@@ -6,9 +6,10 @@
 	import { ActiveDay } from '$lib/interfaces';
 	import { login, logout, user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
+	import { base } from '$app/paths';
 
 	const handleClick = (active_day: ActiveDay) => {
-		goto(`/gymrat/${active_day}`);
+		goto(`${base}/${active_day}`);
 	};
 
 	const current_user: Writable<User> = writable();

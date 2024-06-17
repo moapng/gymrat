@@ -23,10 +23,12 @@
 		<button on:click={() => ($current_user ? logout() : login())}>
 			{$current_user ? 'logga ut' : 'logga in'}</button
 		>
-		<button on:click={() => handleClick(ActiveDay.PUSH)}>PUSH</button>
-		<button on:click={() => handleClick(ActiveDay.PULL)}>PULL</button>
-		<button on:click={() => handleClick(ActiveDay.LEG)}>LEG</button>
-		<button on:click={() => handleClick(ActiveDay.CORE)}>CORE</button>
+		{#if $current_user && $current_user?.role === 'authenticated'}
+			<button on:click={() => handleClick(ActiveDay.PUSH)}>PUSH</button>
+			<button on:click={() => handleClick(ActiveDay.PULL)}>PULL</button>
+			<button on:click={() => handleClick(ActiveDay.LEG)}>LEG</button>
+			<button on:click={() => handleClick(ActiveDay.CORE)}>CORE</button>
+		{/if}
 	</header>
 	{#if $current_user && $current_user?.role === 'authenticated'}
 		<main>

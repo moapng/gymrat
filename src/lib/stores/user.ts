@@ -1,6 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
-import { base } from '$app/paths';
 
 export const user = writable();
 
@@ -12,7 +11,10 @@ export const login = async () => {
 	const { data, error } = await supabase.auth.signInWithOAuth({
 		provider: 'github',
 		options: {
-			redirectTo: window.location.href + base
+			redirectTo:
+				process.env.NODE_ENV === 'production'
+					? 'https://moapng.github.io/gymrat/'
+					: 'http://localhost:5173/'
 		}
 	});
 };

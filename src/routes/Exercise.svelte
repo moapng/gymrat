@@ -4,21 +4,39 @@
 	import type { User } from '@supabase/supabase-js';
 	import { writable, type Writable } from 'svelte/store';
 
-	export let exercise: IExercise;
-	export let user: User;
+	type Props = {
+		exercise: IExercise;
+		user: User;
+	};
+
+	let { exercise, user } = $props<Props>();
 
 	const input_weight: Writable<number> = writable();
 
-	const show_button: Writable<boolean> = writable(false);
+	let show_button: boolean = $state(false);
 </script>
 
-<dt on:click={() => show_button.set(true)}>{exercise.exercise_name}</dt>
-<dd>Main Muscle Groups: {exercise.main_muscle_groups.join(', ')}</dd>
-<dd>Type: {exercise.type}</dd>
-<dd>Equipment: {exercise.equipment}</dd>
-{#if $show_button}
-	<input TYPE="NUMBER" bind:value={$input_weight} />
-	<button on:click={() => insert_exercise_log(user.id, exercise.id, $input_weight, new Date())}
-		>lägg till vikt</button
-	>
-{/if}
+<dl class="card bg-primary gap-2 mb-2">
+	<div class="card-body">
+		<button onclick={() => (show_button = !show_button)}
+			><dt class="card-title">{exercise.exercise_name}</dt></button
+		>
+		<dd>Main Muscle Groups: {exercise.main_muscle_groups.join(', ')}</dd>
+		<dd>Type: {exercise.type}</dd>
+		<dd>Equipment: {exercise.equipment}</dd>
+		{#if show_button}
+			<div class="flex flex-row">
+				<input
+					class="input input-bordered input-secondary w-20 basis-1/2"
+					TYPE="NUMBER"
+					bind:value={$input_weight}
+				/>
+				<button
+					class="btn btn-secondary w-20 basis-1/2"
+					onclick={() => insert_exercise_log(user.id, exercise.id, $input_weight, new Date())}
+					>lägg till vikt</button
+				>
+			</div>
+		{/if}
+	</div>
+</dl>

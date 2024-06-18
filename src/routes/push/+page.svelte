@@ -9,8 +9,8 @@
 	const current_user: User = $state(get(user)) as User;
 </script>
 
-<dl>
+
 	{#each data.exercises as exercise}
 		<Exercise {exercise} user={current_user} />
 	{/each}
-</dl>
+

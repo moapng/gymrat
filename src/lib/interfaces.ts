@@ -1,4 +1,4 @@
-export interface Exercise {
+export interface IExercise {
 	id: number;
 	main_muscle_groups: string[];
 	exercise_name: string;

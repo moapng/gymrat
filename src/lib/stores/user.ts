@@ -1,7 +1,8 @@
 import { writable, type Writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
-export const user = writable();
+export const user: Writable<User | null> = writable();
 
 supabase.auth.onAuthStateChange((event, session) => {
 	user.set(session?.user || null);

@@ -1,6 +1,7 @@
 export interface IExercise {
 	id: number;
-	main_muscle_groups: string[];
+	primary_muscle_groups: string[];
+	secondary_muscle_groups: string[];
 	exercise_name: string;
 	difficulty: number;
 	type: string;
@@ -13,5 +14,6 @@ export enum ActiveDay {
 	PUSH = 'push',
 	PULL = 'pull',
 	LEG = 'leg',
-	CORE = 'core'
+	CORE = 'core',
+	CARDIO = 'cardio'
 }

@@ -6,7 +6,7 @@ export const insert_exercise_log = async (
 	weight: number,
 	log_date: Date
 ) => {
-	const { data, error } = await supabase.from('exercise_logs').insert([
+	const { error, status } = await supabase.from('exercise_logs').insert([
 		{
 			user_id,
 			exercise_id,
@@ -19,6 +19,5 @@ export const insert_exercise_log = async (
 		console.error('Error inserting exercise log:', error);
 		throw error;
 	}
-
-	return data;
+	return { status };
 };

@@ -4,27 +4,28 @@
 	import { login, logout, user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
 	import { base } from '$app/paths';
-	import { get } from 'svelte/store';
+	import { get, writable, type Writable } from 'svelte/store';
 	import { page } from '$app/stores';
 
 	let { children } = $props();
 	let active_route: ActiveDay | 'stats' = $state($page.url.pathname.slice(0, 1) as ActiveDay);
-	let current_user: User | null = $state(get(user));
+	// let current_user: User | null = $state(get(user)); // $state e lite buggad verkar det som
+	const current_user: Writable<User | null> = writable(get(user));
 
 	$effect(() => {
 		active_route = $page.url.pathname.slice(1) as ActiveDay;
-		current_user = get(user);
+		current_user.set(get(user));
 	});
 </script>
 
 <header>
-	{#if !current_user}
+	{#if !$current_user}
 		<button onclick={() => (current_user ? logout() : login())}> logga in</button>
 	{/if}
 </header>
 
-{#if current_user && current_user?.role === 'superduper'}
-	<main>
+{#if $current_user && $current_user?.role === 'superduper'}
+	<main class="grid grid-cols-1">
 		{@render children()}
 	</main>
 {/if}

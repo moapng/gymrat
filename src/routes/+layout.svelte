@@ -8,8 +8,8 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
-	let active_route: ActiveDay | 'stats' = $state($page.url.pathname.slice(0, 1) as ActiveDay);
-	// let current_user: User | null = $state(get(user)); // $state e lite buggad verkar det som
+	let active_route: ActiveDay | 'STATS' = $state($page.url.pathname.slice(0, 1) as ActiveDay);
+
 	const current_user: Writable<User | null> = writable(get(user));
 
 	$effect(() => {
@@ -18,17 +18,16 @@
 	});
 </script>
 
-<header>
+<main class="grid grid-cols-1">
 	{#if !$current_user}
-		<button onclick={() => (current_user ? logout() : login())}> logga in</button>
+		<button class="btn btn-primary" onclick={() => login()}> logga in </button>
 	{/if}
-</header>
 
-{#if $current_user && $current_user?.role === 'superduper'}
-	<main class="grid grid-cols-1">
+	{#if $current_user && $current_user?.role === 'superduper'}
 		{@render children()}
-	</main>
-{/if}
+	{/if}
+</main>
+
 <nav class="btm-nav">
 	<a href={`${base}/${ActiveDay.PUSH}`} class:active={active_route === ActiveDay.PUSH}>
 		🏋️‍♀️
@@ -46,7 +45,7 @@
 		🤸🏻‍♂️
 		<span class="btm-nav-label">CORE</span>
 	</a>
-	<a href={`${base}/stats`} class:active={active_route === 'stats'}>
+	<a href={`${base}/STATS`} class:active={active_route === 'STATS'}>
 		📈
 		<span class="btm-nav-label">Statics</span>
 	</a>

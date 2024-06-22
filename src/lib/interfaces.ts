@@ -11,9 +11,9 @@ export interface IExercise {
 }
 
 export enum ActiveDay {
-	PUSH = 'push',
-	PULL = 'pull',
-	LEG = 'leg',
-	CORE = 'core',
-	CARDIO = 'cardio'
+	PUSH = 'PUSH_DAY',
+	PULL = 'PULL_DAY',
+	LEG = 'LEG_DAY',
+	CORE = 'CORE_DAY',
+	CARDIO = 'CARDIO'
 }

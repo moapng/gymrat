@@ -1,8 +1,10 @@
+import type { ActiveDay } from './interfaces';
 import { supabase } from './supabase';
 
 export const insert_exercise_log = async (
 	user_id: string,
 	exercise_id: number,
+	category: ActiveDay,
 	weight: number,
 	log_date: Date
 ) => {
@@ -10,6 +12,7 @@ export const insert_exercise_log = async (
 		{
 			user_id,
 			exercise_id,
+			category,
 			weight,
 			log_date
 		}

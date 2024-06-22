@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { insert_exercise_log } from '$lib/api';
-	import type { IExercise } from '$lib/interfaces';
+	import type { ActiveDay, IExercise } from '$lib/interfaces';
 	import { user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
 	import { tick } from 'svelte';
@@ -22,6 +23,7 @@
 	let toast_error = $state();
 
 	const current_user: User = $state(get(user)) as User;
+	const active_day: ActiveDay = $state($page.route.id?.slice(1)) as ActiveDay;
 
 	const onclick = async () => {
 		if (!show_input) {
@@ -36,10 +38,13 @@
 				let response = await insert_exercise_log(
 					current_user.id,
 					exercise.id,
+					active_day,
 					input_weight,
 					new Date()
 				);
-				toast_message = 'uppdaterat databasen';
+				if (response.status === 201) {
+					toast_message = 'uppdaterat databasen';
+				}
 			} catch (error) {
 				toast_error = error.message;
 			}

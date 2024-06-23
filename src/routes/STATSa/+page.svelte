@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LineChart from './LineChart.svelte';
-	import PieChart from './PieChart.svelte';
+	import PieChart from './PieChart.svelte';../stats/$types.js
 
 	let { data } = $props();
 

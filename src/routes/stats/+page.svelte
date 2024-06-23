@@ -1,7 +1,9 @@
 <script lang="ts">
+	import LineChart from './LineChart.svelte';
+	import PieChart from './PieChart.svelte';
+
 	let { data } = $props();
 
-	console.log(data);
 	const unique_dates = [...new Set(data.logs.map((log) => log.log_date))];
 	const percentage = $state(((unique_dates.length / 30) * 100).toPrecision(2));
 
@@ -9,7 +11,6 @@
 		counts[log.category] = (counts[log.category] || 0) + 1;
 		return counts;
 	}, {});
-	console.log(category_counts);
 
 	const sorted_category_counts = Object.entries(category_counts).sort((a, b) => b[1] - a[1]);
 	const most_popular_category = $state(
@@ -43,18 +44,7 @@
 
 	<dl class="stat">
 		<div class="stat-figure text-secondary">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				class="inline-block w-8 h-8 stroke-current"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M13 10V3L4 14h7v7l9-11h-7z"
-				></path></svg
-			>
+			<PieChart exercise_logs={data.logs} />
 		</div>
 		<dt class="stat-title">Mest populära kategorin</dt>
 		<dd class="stat-value text-secondary">{most_popular_category}</dd>
@@ -78,41 +68,11 @@
 	</dl>
 
 	<dl class="stat">
-		<div class="stat-figure text-secondary">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				class="inline-block w-8 h-8 stroke-current"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M13 10V3L4 14h7v7l9-11h-7z"
-				></path></svg
-			>
-		</div>
+		<div class="stat-figure text-secondary"></div>
 		<dt class="stat-title">månadsstreak</dt>
-		<dd class="stat-value text-secondary">25.6K</dd>
-		<dd class="stat-desc">21% more than last month</dd>
-	</dl>
-	<dl class="stat">
-		<div class="stat-figure text-secondary">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				class="inline-block w-8 h-8 stroke-current"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M13 10V3L4 14h7v7l9-11h-7z"
-				></path></svg
-			>
-		</div>
-		<dt class="stat-title">månadsstreak</dt>
-		<dd class="stat-value text-secondary">25.6K</dd>
+		<dd class="stat-value text-secondary">
+			<LineChart exercise_logs={data.logs} />
+		</dd>
 		<dd class="stat-desc">21% more than last month</dd>
 	</dl>
 </div>

@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 
 export const insert_exercise_log = async (
 	user_id: string,
-	exercise_id: number,
+	exercise_name: string,
 	category: ActiveDay,
 	weight: number,
 	log_date: Date
@@ -11,7 +11,7 @@ export const insert_exercise_log = async (
 	const { error, status } = await supabase.from('exercise_logs').insert([
 		{
 			user_id,
-			exercise_id,
+			exercise_name,
 			category,
 			weight,
 			log_date

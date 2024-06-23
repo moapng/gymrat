@@ -37,7 +37,7 @@
 			try {
 				let response = await insert_exercise_log(
 					current_user.id,
-					exercise.id,
+					exercise.exercise_name,
 					active_day,
 					input_weight,
 					new Date()

@@ -7,6 +7,6 @@
 	const current_user: Writable<User | null> = writable(get(user));
 
 	$effect(() => {
-		if ($current_user) goto('/push_day');
+		if ($current_user) goto('/PUSH');
 	});
 </script>

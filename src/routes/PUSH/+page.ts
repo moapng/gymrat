@@ -1,7 +1,7 @@
 import { supabase } from '$lib/supabase';
 
 export const load = async () => {
-	const { data, error } = await supabase.from('exercises').select('*').eq('category', 'LEG_DAY');
+	const { data, error } = await supabase.from('exercises').select('*').eq('exercise_type', 'PUSH');
 
 	if (error) {
 		console.error('Error fetching exercises:', error);

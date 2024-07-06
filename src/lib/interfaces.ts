@@ -3,27 +3,25 @@ export interface IExercise {
 	primary_muscle_groups: string[];
 	secondary_muscle_groups: string[];
 	exercise_name: string;
-	difficulty: number;
 	type: string;
 	equipment: string;
-	description: string;
-	category: string;
 }
 
 export interface IExerciseLog {
 	id: string;
-	user_id: string;
-	exercise_name: string;
+	exercise_id: string;
 	weight: number;
-	log_date: Date;
-	category: ActiveDay;
+	repetitions: number;
+	date: Date;
+	is_personal_best: boolean;
+	week: number;
 }
 
 export enum ActiveDay {
-	PUSH = 'PUSH_DAY',
-	PULL = 'PULL_DAY',
-	LEG = 'LEG_DAY',
-	CORE = 'CORE_DAY',
+	PUSH = 'PUSH',
+	PULL = 'PULL',
+	LEG = 'LEG',
+	CORE = 'CORE',
 	// CARDIO = 'CARDIO'
 }
 export const colors = [

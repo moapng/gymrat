@@ -1,20 +1,21 @@
-import type { ActiveDay } from './interfaces';
 import { supabase } from './supabase';
 
 export const insert_exercise_log = async (
-	user_id: string,
-	exercise_name: string,
-	category: ActiveDay,
+	exercise_id: string,
 	weight: number,
-	log_date: Date
+	repetitions: number,
+	date: Date,
+	is_personal_best: boolean,
+	week: number
 ) => {
 	const { error, status } = await supabase.from('exercise_logs').insert([
 		{
-			user_id,
-			exercise_name,
-			category,
+			exercise_id,
 			weight,
-			log_date
+			repetitions,
+			date,
+			is_personal_best,
+			week
 		}
 	]);
 

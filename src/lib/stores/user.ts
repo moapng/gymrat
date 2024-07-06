@@ -5,7 +5,10 @@ import type { User } from '@supabase/supabase-js';
 export const user: Writable<User | null> = writable();
 
 supabase.auth.onAuthStateChange((event, session) => {
-	user.set(session?.user || null);
+	if (session) {
+		user.set(session.user);
+		supabase.auth.setSession({ access_token: session.access_token, refresh_token: session.refresh_token });
+	}
 });
 
 export const login = async () => {

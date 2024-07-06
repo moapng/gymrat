@@ -16,7 +16,11 @@
 
 	let input_element: HTMLElement | undefined = $state();
 	let input_weight: number | undefined = $state();
+	let input_repetitions: number | undefined = $state();
 	let show_input: boolean = $state(false);
+
+	let is_personal_best: boolean = $state(false);
+	let current_texas_week: number = $state(99);
 
 	let show_toast: boolean = $state(false);
 	let toast_message = $state();
@@ -33,14 +37,15 @@
 		}
 	};
 	const onsubmit = async () => {
-		if (current_user && current_user?.role === 'superduper' && input_weight) {
+		if (current_user && current_user?.role === 'superduper' && input_weight && input_repetitions) {
 			try {
 				let response = await insert_exercise_log(
-					current_user.id,
-					exercise.exercise_name,
-					active_day,
+					exercise.id,
 					input_weight,
-					new Date()
+					input_repetitions,
+					new Date(),
+					is_personal_best,
+					current_texas_week
 				);
 				if (response.status === 201) {
 					toast_message = 'uppdaterat databasen';

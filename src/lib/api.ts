@@ -5,23 +5,43 @@ export const insert_exercise_log = async (
 	weight: number,
 	repetitions: number,
 	date: Date,
-	is_personal_best: boolean,
 	week: number
 ) => {
-	const { error, status } = await supabase.from('exercise_logs').insert([
-		{
-			exercise_id,
-			weight,
-			repetitions,
-			date,
-			is_personal_best,
-			week
-		}
-	]);
+	const { error, status, data } = await supabase
+		.from('exercise_logs')
+		.insert([
+			{
+				exercise_id,
+				weight,
+				repetitions,
+				date,
+				week
+			}
+		])
+		.select('*');
 
 	if (error) {
 		console.error('Error inserting exercise log:', error);
 		throw error;
 	}
-	return { status };
+	return { status, data };
+};
+
+export const insert_personal_best = async (exercise_id: string, exercise_log_id: string) => {
+	const { error, status, data } = await supabase
+		.from('personal_best')
+		.insert([
+			{
+				exercise_id,
+				exercise_log_id
+			}
+		])
+		.select('*');
+
+	if (error) {
+		console.error('Error inserting personal best:', error);
+		throw error;
+	}
+	console.log(data);
+	return { status, data };
 };

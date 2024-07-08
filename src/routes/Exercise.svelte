@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { insert_exercise_log } from '$lib/api';
+	import { insert_exercise_log, insert_personal_best } from '$lib/api';
 	import type { ActiveDay, IExercise } from '$lib/interfaces';
 	import { user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
@@ -14,12 +14,12 @@
 	//@ts-ignore
 	let { exercise } = $props<Props>();
 
-	let input_element: HTMLElement | undefined = $state();
-	let input_weight: number | undefined = $state();
-	let input_repetitions: number | undefined = $state();
-	let show_input: boolean = $state(false);
+	let input_weight_element: HTMLElement | undefined = $state();
+	let input_weight: number | null = $state(null);
 
-	let is_personal_best: boolean = $state(false);
+	let input_repetitions_element: HTMLElement | undefined = $state();
+	let input_repetitions: number | null = $state(null);
+
 	let current_texas_week: number = $state(99);
 
 	let show_toast: boolean = $state(false);
@@ -30,30 +30,36 @@
 	const active_day: ActiveDay = $state($page.route.id?.slice(1)) as ActiveDay;
 
 	const onclick = async () => {
-		if (!show_input) {
-			show_input = true;
-			await tick();
-			input_element?.focus();
-		}
+		await tick();
+		input_weight_element?.focus();
 	};
+
 	const onsubmit = async () => {
-		if (current_user && current_user?.role === 'superduper' && input_weight && input_repetitions) {
+		if (
+			current_user &&
+			current_user?.role === 'superduper' &&
+			input_weight !== null &&
+			input_repetitions !== null
+		) {
 			try {
 				let response = await insert_exercise_log(
 					exercise.id,
 					input_weight,
 					input_repetitions,
 					new Date(),
-					is_personal_best,
 					current_texas_week
 				);
-				if (response.status === 201) {
+				if (response.status === 201 && response.data[0].id) {
+					const log_id = response.data[0].id;
+					tick();
+					let response2 = await insert_personal_best(exercise.id, log_id);
+					console.log(response2);
 					toast_message = 'uppdaterat databasen';
 				}
 			} catch (error) {
 				toast_error = error.message;
 			}
-			show_input = false;
+			// show_input = false;
 			show_toast = true;
 			setTimeout(() => {
 				show_toast = false;
@@ -78,56 +84,36 @@
 		{/if}
 	</div>
 {/if}
-<dl class="stat">
-	<div class="stat-figure text-secondary">
-		{#if show_input}
-			<input
-				class="input input-bordered input-secondary w-16"
-				TYPE="NUMBER"
-				bind:this={input_element}
-				bind:value={input_weight}
-				onblur={() => (show_input = false)}
-				{onsubmit}
-				{onkeyup}
-			/>
-		{:else}
-			<button class="group btn btn-outline btn-primary w-16" {onclick}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 512 512"
-					class="fill-secondary group-hover:fill-white"
-				>
-					<path
-						d="M144 416H96V368 80 32h48H432h48V80 320l-96 96H144zm220.1-48L432 300.1V80H144V368H364.1zM320 128v64h64v64H320v64H256V256H192V192h64V128h64zM296 464h24v48H296 24 0V488 152 128l48 0v24l0 312H296z"
-					/>
-				</svg>
-			</button>
-		{/if}
-	</div>
-	<dt class="stat-desc">{exercise.primary_muscle_groups.join(', ')}</dt>
-	<dd class="stat-title font-bold text-primary">{exercise.exercise_name}</dd>
-	<dd class="stat-desc">{exercise.secondary_muscle_groups.join(', ')}</dd>
-</dl>
 
-<!-- <dl class="card bg-primary gap-2 mb-2">
-	<div class="card-body">
-		<button onclick={() => (show_button = !show_button)}
-			><dt class="card-title">{exercise.exercise_name}</dt></button
-		>
-		<dt>Primary Muscle Groups:</dt>
-		<dd>{exercise.primary_muscle_groups.join(', ')}</dd>
-		<dt>Secondary Muscle Groups:</dt>
-		<dd>{exercise.secondary_muscle_groups.join(', ')}</dd>
-		<dd>Equipment: {exercise.equipment}</dd>
-		{#if show_button}
-			<div class="flex flex-row">
-				<input
-					class="input input-bordered input-secondary w-20 basis-1/2"
-					TYPE="NUMBER"
-					bind:value={$input_weight}
-				/>
-				<button class="btn btn-secondary w-20 basis-1/2" {onclick}>lägg till vikt</button>
-			</div>
+<div class="collapse collapse-plus bg-base-primary">
+	<input type="radio" name="exercise-accordion" {onclick} />
+	<dl class="stat h-24 collapse-title">
+		<div class="stat-figure text-secondary"></div>
+		<dt class="stat-desc">{exercise.primary_muscle_groups.join(', ')}</dt>
+		<dd class="stat-title font-bold text-primary">{exercise.exercise_name}</dd>
+		{#if exercise.secondary_muscle_groups}
+			<dd class="stat-desc">{exercise.secondary_muscle_groups.join(', ')}</dd>
 		{/if}
+	</dl>
+	<div class="collapse-content grid grid-cols-7 gap-2">
+		<label for="weight"> vikt </label>
+		<input
+			name="weight"
+			class="input input-bordered input-secondary col-span-2"
+			TYPE="NUMBER"
+			bind:this={input_weight_element}
+			bind:value={input_weight}
+		/>
+		<div class="divider divider-horizontal" />
+		<label for="repetitions"> reps </label>
+		<input
+			name="repetitions"
+			class="input input-bordered input-secondary col-span-2"
+			TYPE="NUMBER"
+			bind:this={input_repetitions_element}
+			bind:value={input_repetitions}
+			{onsubmit}
+			{onkeyup}
+		/>
 	</div>
-</dl> -->
+</div>

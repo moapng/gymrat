@@ -4,6 +4,8 @@
 	let { data } = $props();
 </script>
 
-{#each data.exercises as exercise}
-	<Exercise {exercise} />
-{/each}
+<section>
+	{#each data.exercises as exercise}
+		<Exercise {exercise} />
+	{/each}
+</section>

@@ -5,7 +5,7 @@ export const load = async () => {
 		.from('exercise_logs')
 		.select('*')
 		.gte(
-			'log_date',
+			'date',
 			new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0]
 		);
 

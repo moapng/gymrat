@@ -11,15 +11,15 @@
 		[ActiveDay.LEG]: 0,
 		[ActiveDay.CORE]: 0
 	};
-	exercise_logs.map((log: IExerciseLog) => {
-		amount_of_specific_category_days[log.category] =
-			amount_of_specific_category_days[log.category] + 1;
-	});
-	console.log(
-		Object.entries(amount_of_specific_category_days).map((day) => {
-			return { value: day[1], name: day[0] };
-		})
-	);
+	// exercise_logs.map((log: IExerciseLog) => {
+	// 	amount_of_specific_category_days[log.type] =
+	// 		amount_of_specific_category_days[log.type] + 1;
+	// });
+	// console.log(
+	// 	Object.entries(amount_of_specific_category_days).map((day) => {
+	// 		return { value: day[1], name: day[0] };
+	// 	})
+	// );
 
 	let options = {
 		tooltip: {

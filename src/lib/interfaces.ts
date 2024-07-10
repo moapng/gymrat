@@ -17,6 +17,16 @@ export interface IExerciseLog {
 	week: number;
 }
 
+export interface IPersonalRecord {
+	id: string;
+	exercise_id: string;
+	exercise_name: string;
+	weight: number;
+	repetitions: number;
+	date: string;
+}
+
+
 export enum ActiveDay {
 	PUSH = 'PUSH',
 	PULL = 'PULL',

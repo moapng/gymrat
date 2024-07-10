@@ -8,10 +8,11 @@
 	const unique_dates = [...new Set(data.logs.map((log) => log.log_date))];
 	const percentage = $state(((unique_dates.length / 30) * 100).toPrecision(2));
 
-	let latest_pbs = $state(data.latest_pbs);
+	let personal_records = $state(data.personal_records);
+	console.log(personal_records);
 </script>
 
-<div class="stats stats-vertical shadow">
+<section class="stats stats-vertical shadow">
 	<dl class="stat">
 		<div class="stat-figure text-primary">
 			<svg
@@ -32,15 +33,15 @@
 		<dd class="stat-desc">{unique_dates.length} av 30</dd>
 	</dl>
 
-	<dl class="stat">
+	<!-- <dl class="stat">
 		<dt class="stat-title">Senaste PR</dt>
-		{#each latest_pbs as latest_pb}
-			<dd class="stat-value text-primary">{latest_pb.exercise_name}</dd>
-			<dd class="stat-value text-secondary">{latest_pb.weight}x{latest_pb.repetitions}</dd>
+		{#each personal_records as PR}
+			<dd class="stat-value text-primary">{PR.exercise_name}</dd>
+			<dd class="stat-value text-secondary">{PR.weight}kgx{PR.repetitions}</dd>
 		{/each}
-	</dl>
+	</dl> -->
 
-	<dl class="stat">
+	<!-- <dl class="stat">
 		<div class="stat-figure text-secondary">
 			<div class="avatar online">
 				<div class="w-16 rounded-full">
@@ -51,14 +52,13 @@
 		<dt class="stat-title">månadsstreak</dt>
 		<dd class="stat-value text-primary">25.6K</dd>
 		<dd class="stat-desc">21% more than last month</dd>
-	</dl>
+	</dl> -->
 
 	<dl class="stat">
 		<div class="stat-figure text-secondary"></div>
-		<dt class="stat-title">månadsstreak</dt>
+		<dt class="stat-title">PR</dt>
 		<dd class="stat-value text-secondary">
-			<!-- <LineChart exercise_logs={data.logs} /> -->
+			<LineChart data={data.personal_records} />
 		</dd>
-		<dd class="stat-desc">21% more than last month</dd>
 	</dl>
-</div>
+</section>

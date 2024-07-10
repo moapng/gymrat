@@ -9,14 +9,14 @@ export const load = async () => {
 			new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0]
 		);
 
-	const latest_pbs = await supabase
-		.from('latest_personal_best')
+	const personal_records = await supabase
+		.from('personal_records')
 		.select('*');
 
-	if (logs.error || latest_pbs.error) {
+	if (logs.error || personal_records.error) {
 		console.error('Error fetching exercises:', logs.error);
-		return { logs: [], latest_pbs: [] };
+		return { logs: [], personal_records: [] };
 	}
 
-	return { logs: logs.data, latest_pbs: latest_pbs.data };
+	return { logs: logs.data, personal_records: personal_records.data };
 };

@@ -1,23 +1,25 @@
 <script lang="ts">
-	import { ActiveDay, colors, type IExerciseLog } from '$lib/interfaces';
-	import * as echarts from 'echarts';
 	import { onMount } from 'svelte';
+	import * as echarts from 'echarts';
+	import { colors, type IPersonalRecord } from '$lib/interfaces';
 
-	let { exercise_logs }: { exercise_logs: IExerciseLog[] } = $props();
+	// Define props and ensure they conform to the IPersonalRecord interface
+	export let data: IPersonalRecord[];
 
-	const exercise_names = [...new Set(exercise_logs.map((log) => log.exercise_name))];
-	let dates = [...new Set(exercise_logs.map((log) => log.log_date))].sort(
+	const exercise_names = [...new Set(data.map((PR) => PR.exercise_name))];
+	const dates = [...new Set(data.map((PR) => PR.date))].sort(
 		(a, b) => new Date(a).getTime() - new Date(b).getTime()
 	);
-	$effect(() => {
-		console.log(dates);
-	});
 
-	const unique_exercise_names = [...new Set(exercise_logs.map((log) => log.exercise_name))];
-	const series_data = unique_exercise_names.map((name, index) => {
+	const series_data = exercise_names.map((name, i) => {
 		const weights = dates.map((date) => {
-			const log = exercise_logs.find((ex) => ex.exercise_name === name && ex.log_date === date);
-			return log ? log.weight : null;
+			const PR = data.find((ex) => ex.exercise_name === name && ex.date === date);
+			return PR ? PR.weight : null;
+		});
+
+		const labels = weights.map((weight, index) => {
+			const PR = data.find((ex) => ex.exercise_name === name && ex.date === dates[index]);
+			return PR ? `${PR.weight} x ${PR.repetitions}` : '';
 		});
 
 		return {
@@ -28,13 +30,26 @@
 			smooth: true,
 			lineStyle: {
 				width: 4,
-				stroke: 'black'
+				color: colors[i]
 			},
 			showSymbol: true,
 			emphasis: {
 				focus: 'series'
 			},
-			data: weights
+			data: weights,
+			label: {
+				show: true,
+				position: 'top',
+				fontSize: 12,
+				fontWeight: 'bold',
+				fontFamily: 'Arial, sans-serif',
+				color: '#4d306f',
+				backgroundColor: colors[i],
+				borderRadius: 6,
+				padding: [6, 4],
+				rotate: 45,
+				formatter: (params: any) => labels[params.dataIndex]
+			}
 		};
 	});
 
@@ -53,8 +68,8 @@
 			data: exercise_names
 		},
 		grid: {
-			left: '3%',
-			right: '4%',
+			left: '8%',
+			right: '8%',
 			bottom: '3%',
 			containLabel: true
 		},

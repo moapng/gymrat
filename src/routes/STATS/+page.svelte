@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { IExerciseLog } from '$lib/interfaces';
 	import LineChart from './LineChart.svelte';
 	import PieChart from './PieChart.svelte';
 
@@ -7,18 +8,7 @@
 	const unique_dates = [...new Set(data.logs.map((log) => log.log_date))];
 	const percentage = $state(((unique_dates.length / 30) * 100).toPrecision(2));
 
-	const category_counts: { ActiveDay: number } = data.logs.reduce((counts, log) => {
-		counts[log.category] = (counts[log.category] || 0) + 1;
-		return counts;
-	}, {});
-
-	const sorted_category_counts = Object.entries(category_counts).sort((a, b) => b[1] - a[1]);
-	const most_popular_category = $state(
-		sorted_category_counts[0] ? sorted_category_counts[0][0] : null
-	);
-	const second_most_popular_category = $state(
-		sorted_category_counts[1] ? sorted_category_counts[1][0] : null
-	);
+	let latest_pbs = $state(data.latest_pbs);
 </script>
 
 <div class="stats stats-vertical shadow">
@@ -43,15 +33,11 @@
 	</dl>
 
 	<dl class="stat">
-		<div class="stat-figure text-secondary">
-			<PieChart exercise_logs={data.logs} />
-		</div>
-		<dt class="stat-title">Mest populära kategorin</dt>
-		<dd class="stat-value text-secondary">{most_popular_category}</dd>
-		<div>
-			<dt class="stat-desc">Näst mest populära</dt>
-			<dd class="stat-title text-secondary font-bold">{second_most_popular_category}</dd>
-		</div>
+		<dt class="stat-title">Senaste PR</dt>
+		{#each latest_pbs as latest_pb}
+			<dd class="stat-value text-primary">{latest_pb.exercise_name}</dd>
+			<dd class="stat-value text-secondary">{latest_pb.weight}x{latest_pb.repetitions}</dd>
+		{/each}
 	</dl>
 
 	<dl class="stat">
@@ -71,7 +57,7 @@
 		<div class="stat-figure text-secondary"></div>
 		<dt class="stat-title">månadsstreak</dt>
 		<dd class="stat-value text-secondary">
-			<LineChart exercise_logs={data.logs} />
+			<!-- <LineChart exercise_logs={data.logs} /> -->
 		</dd>
 		<dd class="stat-desc">21% more than last month</dd>
 	</dl>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { insert_exercise_log, insert_personal_best } from '$lib/api';
+	import { insert_exercise_log } from '$lib/api';
 	import type { ActiveDay, IExercise } from '$lib/interfaces';
 	import { user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
@@ -49,11 +49,8 @@
 					new Date(),
 					current_texas_week
 				);
-				if (response.status === 201 && response.data[0].id) {
-					const log_id = response.data[0].id;
+				if (response.status === 201) {
 					tick();
-					let response2 = await insert_personal_best(exercise.id, log_id);
-					console.log(response2);
 					toast_message = 'uppdaterat databasen';
 				}
 			} catch (error) {

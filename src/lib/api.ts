@@ -26,22 +26,3 @@ export const insert_exercise_log = async (
 	}
 	return { status, data };
 };
-
-export const insert_personal_best = async (exercise_id: string, exercise_log_id: string) => {
-	const { error, status, data } = await supabase
-		.from('personal_best')
-		.insert([
-			{
-				exercise_id,
-				exercise_log_id
-			}
-		])
-		.select('*');
-
-	if (error) {
-		console.error('Error inserting personal best:', error);
-		throw error;
-	}
-	console.log(data);
-	return { status, data };
-};

@@ -6,6 +6,7 @@
 	import type { User } from '@supabase/supabase-js';
 	import { tick } from 'svelte';
 	import { get } from 'svelte/store';
+	import { AccordionItem } from '@skeletonlabs/skeleton';
 
 	type Props = {
 		exercise: IExercise;
@@ -69,7 +70,7 @@
 </script>
 
 {#if show_toast}
-	<div class="toast toast-top toast-center">
+	<div class="toast toast-center toast-top">
 		{#if toast_message}
 			<div class="alert alert-success">
 				<p>✨ {toast_message} ✨</p>
@@ -82,17 +83,11 @@
 	</div>
 {/if}
 
-<div class="collapse collapse-plus bg-base-primary">
-	<input type="radio" name="exercise-accordion" {onclick} />
-	<dl class="stat h-24 collapse-title">
-		<div class="stat-figure text-secondary"></div>
-		<dt class="stat-desc">{exercise.primary_muscle_groups.join(', ')}</dt>
-		<dd class="stat-title font-bold text-primary">{exercise.exercise_name}</dd>
-		{#if exercise.secondary_muscle_groups}
-			<dd class="stat-desc">{exercise.secondary_muscle_groups.join(', ')}</dd>
-		{/if}
-	</dl>
-	<div class="collapse-content grid grid-cols-7 gap-2">
+<AccordionItem>
+	<svelte:fragment slot="summary">
+		{exercise.exercise_name}
+	</svelte:fragment>
+	<svelte:fragment slot="content">
 		<label for="weight"> vikt </label>
 		<input
 			name="weight"
@@ -112,5 +107,5 @@
 			{onsubmit}
 			{onkeyup}
 		/>
-	</div>
-</div>
+	</svelte:fragment>
+</AccordionItem>

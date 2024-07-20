@@ -13,7 +13,6 @@ export interface IExerciseLog {
 	weight: number;
 	repetitions: number;
 	date: Date;
-	is_personal_best: boolean;
 	week: number;
 }
 

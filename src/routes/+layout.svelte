@@ -1,79 +1,59 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { TabAnchor, TabGroup } from '@skeletonlabs/skeleton';
-	import { ActiveDay, type IExerciseLog } from '$lib/interfaces';
-	import { login, logout, user } from '$lib/stores/user';
+	import { ActiveDay } from '$lib/interfaces';
+	import { login, user } from '$lib/stores/user';
 	import type { User } from '@supabase/supabase-js';
-	import { base } from '$app/paths';
 	import { get, writable, type Writable } from 'svelte/store';
-	import { page } from '$app/stores';
+	import { base } from '$app/paths';
+	import { initializeStores, Drawer } from '@skeletonlabs/skeleton';
+	import { getDrawerStore } from '@skeletonlabs/skeleton';
 
 	let { children, data } = $props();
 
-	let active_route: ActiveDay | 'STATS' = $state($page.url.pathname.slice(0, 1) as ActiveDay);
+	initializeStores();
+	const drawerStore = getDrawerStore();
 
 	const current_user: Writable<User | null> = writable(get(user));
-	let logs = $state([] as IExerciseLog[]);
+	// let logs = $state([] as IExerciseLog[]);
 	$effect(() => {
-		active_route = $page.url.pathname.slice(1) as ActiveDay;
 		current_user.set(get(user));
-		logs = data.logs;
+		// logs = data.logs;
 	});
+
+	const active_days = [ActiveDay.PUSH, ActiveDay.PULL, ActiveDay.LEG, ActiveDay.CORE];
 </script>
 
-<main class="">
-	{#if !$current_user}
-		<button
-			class="variant-gradient-secondary-tertiary btn bg-gradient-to-br"
-			onclick={() => login()}
+<Drawer position="bottom" height="h-auto">
+	<section class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0">
+		{#each active_days as active_day}
+			<a
+				href={`${base}/${active_day}`}
+				onclick={() => drawerStore.close()}
+				class="card p-4 text-center">{active_day}</a
+			>
+		{/each}
+
+		<a
+			href={`${base}/STATS`}
+			class="card p-4 col-span-2 text-center"
+			onclick={() => drawerStore.close()}
 		>
-			logga in
-		</button>
+			stats
+		</a>
+	</section>
+</Drawer>
+<main class="absolute inset-x-0 bottom-0">
+	{#if !$current_user}
+		<button class="btn variant-ghost-secondary" onclick={() => login()}> logga in </button>
 	{/if}
 
 	{#if $current_user && $current_user?.role === 'superduper'}
 		{@render children()}
 	{/if}
-	{#each logs as log}
-		<span class="chip variant-filled">
-			{log.exercise_id}
-		</span>
-	{/each}
+	<button class="btn variant-ghost-primary" onclick={() => drawerStore.open()}>
+		hadsjahsdjh
+	</button>
 </main>
-<TabGroup
-	justify="justify-center"
-	active="variant-filled-primary"
-	hover="hover:variant-soft-primary"
-	flex="flex-1 lg:flex-none"
-	rounded=""
-	border=""
-	class="bg-surface-100-800-token w-full"
->
-	<TabAnchor href={`${base}/${ActiveDay.PUSH}`} selected={active_route === ActiveDay.PUSH}>
-		<svelte:fragment slot="lead">(icon)</svelte:fragment>
-		<span>push</span>
-	</TabAnchor>
-	<TabAnchor href={`${base}/${ActiveDay.PULL}`} selected={active_route === ActiveDay.PULL}>
-		<svelte:fragment slot="lead">(icon)</svelte:fragment>
-		<span>pull</span>
-	</TabAnchor>
-	<TabAnchor href={`${base}/${ActiveDay.LEG}`} selected={active_route === ActiveDay.LEG}>
-		<svelte:fragment slot="lead">(icon)</svelte:fragment>
-		<span>leg</span>
-	</TabAnchor>
-	<TabAnchor href={`${base}/${ActiveDay.CORE}`} selected={active_route === ActiveDay.CORE}>
-		<svelte:fragment slot="lead">(icon)</svelte:fragment>
-		<span>core</span>
-	</TabAnchor>
-	<TabAnchor href={`${base}/STATS`} selected={active_route === 'STATS'}>
-		<svelte:fragment slot="lead">(icon)</svelte:fragment>
-		<span>stats</span>
-	</TabAnchor>
-</TabGroup>
 
 <style>
-	main {
-		height: calc(100vh - 64px);
-		overflow: scroll;
-	}
 </style>

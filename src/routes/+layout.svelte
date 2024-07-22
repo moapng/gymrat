@@ -7,6 +7,7 @@
 	import { base } from '$app/paths';
 	import { initializeStores, Drawer } from '@skeletonlabs/skeleton';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
+	import { dev } from '$app/environment';
 
 	let { children, data } = $props();
 
@@ -24,25 +25,27 @@
 </script>
 
 <Drawer position="bottom" height="h-auto">
-	<section class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0">
+	<nav
+		class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0 gap-2 bg-gradient-to-br variant-gradient-primary-secondary"
+	>
 		{#each active_days as active_day}
 			<a
 				href={`${base}/${active_day}`}
 				onclick={() => drawerStore.close()}
-				class="card p-4 text-center">{active_day}</a
+				class="btn p-4 text-center text-2xl">{active_day}</a
 			>
 		{/each}
 
 		<a
 			href={`${base}/STATS`}
-			class="card p-4 col-span-2 text-center"
+			class="btn p-4 col-span-2 text-center text-2xl"
 			onclick={() => drawerStore.close()}
 		>
-			stats
+			STATS
 		</a>
-	</section>
+	</nav>
 </Drawer>
-<main class="absolute inset-x-0 bottom-0">
+<main class="bg-gradient-to-br variant-gradient-primary-secondary h-full flex flex-col-reverse">
 	{#if !$current_user}
 		<button class="btn variant-ghost-secondary" onclick={() => login()}> logga in </button>
 	{/if}
@@ -50,8 +53,11 @@
 	{#if $current_user && $current_user?.role === 'superduper'}
 		{@render children()}
 	{/if}
-	<button class="btn variant-ghost-primary" onclick={() => drawerStore.open()}>
-		hadsjahsdjh
+	<button
+		class="btn w-full variant-soft-secondary object-bottom order-first"
+		onclick={() => drawerStore.open()}
+	>
+		XXX
 	</button>
 </main>
 

@@ -32,29 +32,37 @@
 					tick();
 					toast_store.trigger({
 						message: 'uppdaterat databasen',
+						hideDismiss: true,
 						timeout: 5000,
-						background: 'variant-filled-success'
+						background: 'bg-gradient-to-r from-success-500 to-success-400',
+						classes: 'border-4 border-success-500'
 					});
 				}
 			} catch (error) {
 				toast_store.trigger({
 					message: error.message,
+					hideDismiss: true,
 					timeout: 5000,
-					background: 'variant-filled-error'
+					background: 'bg-gradient-to-r from-error-500 to-error-400',
+					classes: 'border-4 border-error-500'
 				});
 			}
 		} else {
 			if (input_weight === 0)
 				toast_store.trigger({
 					message: '0 i vikt e inte okej',
+					hideDismiss: true,
 					timeout: 5000,
-					background: 'variant-filled-error'
+					background: 'bg-gradient-to-r from-error-500 to-error-400',
+					classes: 'border-4 border-error-500'
 				});
 			if (input_repetitions === 0) {
 				toast_store.trigger({
 					message: '0 i reps e inte okej',
+					hideDismiss: true,
 					timeout: 5000,
-					background: 'variant-filled-error'
+					background: 'bg-gradient-to-r from-error-500 to-error-400',
+					classes: 'border-4 border-error-500'
 				});
 			}
 		}
@@ -186,12 +194,9 @@
 			placeholder="0"
 			{onkeyup}
 		/>
-		<div
-			class="absolute bottom-0 start-1/2 -translate-x-1/2 flex pb-1 gap-1
-			text-xs text-primary-500 fill-primary-500"
-		>
+		<div class="absolute bottom-0 start-1/2 -translate-x-1/2 flex pb-1 gap-1">
 			<svg
-				class="w-4 h-4"
+				class="w-4 h-4 fill-primary-500"
 				aria-hidden="true"
 				viewBox="0 0 24 24"
 				version="1.2"
@@ -205,7 +210,7 @@
 				/>
 			</svg>
 
-			<span>vikt</span>
+			<span class="text-xs text-primary-500 align-middle">reps</span>
 		</div>
 		<button
 			type="button"

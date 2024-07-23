@@ -24,16 +24,19 @@
 	const active_days = [ActiveDay.PUSH, ActiveDay.PULL, ActiveDay.LEG, ActiveDay.CORE];
 </script>
 
-<main class="bg-gradient-to-br variant-gradient-primary-secondary h-full flex flex-col-reverse">
+<main
+	class="bg-gradient-to-br variant-gradient-tertiary-secondary
+	h-full flex flex-col-reverse"
+>
 	{#if !$current_user}
-		<button class="btn variant-ghost-secondary" onclick={() => login()}> logga in </button>
+		<button class="btn variant-filled-primary" onclick={() => login()}> logga in </button>
 	{/if}
 
 	{#if $current_user && $current_user?.role === 'superduper'}
 		{@render children()}
 	{/if}
 	<button
-		class="btn w-full variant-soft-secondary object-bottom order-first"
+		class="btn w-full variant-soft-primary object-bottom order-first"
 		onclick={() => drawer_store.open()}
 	>
 		meny
@@ -42,19 +45,24 @@
 <Toast />
 <Drawer position="bottom" height="h-auto">
 	<nav
-		class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0 gap-2 bg-gradient-to-br variant-gradient-primary-secondary"
+		class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0 gap-2
+		bg-gradient-to-br variant-gradient-secondary-tertiary"
 	>
 		{#each active_days as active_day}
 			<a
 				href={`${base}/${active_day}`}
 				onclick={() => drawer_store.close()}
-				class="btn p-4 text-center text-2xl">{active_day}</a
+				class="btn variant-glass-primary
+				p-4
+				text-center text-2xl">{active_day}</a
 			>
 		{/each}
 
 		<a
 			href={`${base}/STATS`}
-			class="btn p-4 col-span-2 text-center text-2xl"
+			class="btn variant-glass-primary
+			p-4 col-span-2
+			text-center text-2xl"
 			onclick={() => drawer_store.close()}
 		>
 			STATS

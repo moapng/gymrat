@@ -30,18 +30,37 @@ export const insert_exercise_log = async (
 
 
 export const fetch_exercise_and_pr_data = async (exercise_type: ActiveDay, exercise_name: string) => {
-	const exercises = await supabase
+	const { data: exercises, error: exercises_error } = await supabase
 		.from('exercises')
 		.select().eq('exercise_type', exercise_type);
 
-	const pr = await supabase
+
+	const { data: all_prs, error: all_prs_error } = await supabase
 		.from('personal_records')
 		.select().eq('exercise_name', exercise_name);
 
-	if (exercises.error || pr.error) {
-		console.error('Error fetching data:', exercises.error || pr.error);
-		return { exercises: [], pr: [] };
+	if (exercises_error) {
+		console.error('kunde int hämta övningar', exercises_error);
+		return { exercises: [], pr: [], next_goal: [] };
+	}
+	if (all_prs_error) {
+		console.error('kunde int hämta PR', all_prs_error);
+		return { exercises, pr: [], next_goal: [] };
+	}
+	const exercise_id = exercises.find(exercise => exercise.exercise_name === exercise_name).id;
+
+	const { data: next_goal, error: next_goal_error } = await supabase
+		.from('goals')
+		.select()
+		.eq('exercise_id', exercise_id)
+		.is('achieved_date', null)
+		.order('target_value', { ascending: true })
+		.limit(1);
+
+	if (next_goal_error) {
+		console.error('kunde int hämta mål:', next_goal_error);
+		return { exercises, all_prs, next_goal: [] };
 	}
 
-	return { exercises: exercises.data, pr: pr.data };
+	return { exercises, all_prs, next_goal };
 }

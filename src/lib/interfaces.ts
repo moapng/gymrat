@@ -25,6 +25,23 @@ export interface IPersonalRecord {
 	date: string;
 }
 
+export interface IGoal {
+	id: string;
+	exercise_id: string;
+	created_date: string;
+	achieved_date?: string | null;
+	goal_type: GoalType;
+	target_value: number;
+	target_reps?: number | null;
+}
+
+export enum GoalType {
+	WEIGHT = 'weight',
+	REPS = 'reps',
+	TIME = 'time',
+	DISTANCE = 'distance'
+}
+
 
 export enum ActiveDay {
 	PUSH = 'PUSH',

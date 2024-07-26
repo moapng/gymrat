@@ -11,7 +11,7 @@
 	let { exercise } = $props<Props>();
 </script>
 
-<AccordionItem class="variant-ghost-primary" onclick>
+<AccordionItem class="variant-ghost-primary">
 	<svelte:fragment slot="summary">
 		{exercise.exercise_name}
 	</svelte:fragment>

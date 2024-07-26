@@ -82,7 +82,7 @@
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
 			<svg
-				class="w-3 h-3 text-gray-900"
+				class="w-3 h-3 text-surface-900"
 				aria-hidden="true"
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -142,7 +142,7 @@
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
 			<svg
-				class="w-3 h-3 text-gray-900"
+				class="w-3 h-3 text-surface-900"
 				aria-hidden="true"
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -168,7 +168,7 @@
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
 			<svg
-				class="w-3 h-3 text-gray-900"
+				class="w-3 h-3 text-surface-900"
 				aria-hidden="true"
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -220,7 +220,7 @@
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
 			<svg
-				class="w-3 h-3 text-gray-900"
+				class="w-3 h-3 text-surface-900"
 				aria-hidden="true"
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"

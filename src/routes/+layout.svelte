@@ -25,7 +25,7 @@
 </script>
 
 <main
-	class="bg-gradient-to-br variant-gradient-tertiary-secondary
+	class="bg-gradient-to-br from-surface-200 to-surface-300
 	h-full flex flex-col-reverse"
 >
 	{#if !$current_user}
@@ -46,7 +46,7 @@
 <Drawer position="bottom" height="h-auto">
 	<nav
 		class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0 gap-2
-		bg-gradient-to-br variant-gradient-secondary-tertiary"
+		bg-gradient-to-r from-secondary-300 to-secondary-400"
 	>
 		{#each active_days as active_day}
 			<a

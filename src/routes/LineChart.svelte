@@ -69,27 +69,15 @@
 				}
 			},
 			backgroundColor: very_light_purple_rgb,
-			borderColor: dark_purple_rgb,
-			borderWidth: 1,
 			borderRadius: 6,
-			textStyle: {
-				color: dark_purple_rgb
-			}
-		},
-		legend: {
-			data: exercise_names,
-			backgroundColor: very_light_purple_rgb,
-			borderColor: dark_purple_rgb,
-			borderWidth: 1,
-			borderRadius: 6,
+			borderColor: very_light_purple_rgb,
 			textStyle: {
 				color: dark_purple_rgb
 			}
 		},
 		grid: {
-			left: '8%',
-			right: '8%',
-			bottom: '3%',
+			bottom: '5%',
+			top: '14%',
 			containLabel: true
 		},
 		xAxis: [
@@ -140,4 +128,4 @@
 	});
 </script>
 
-<div bind:this={chartElement} id="main" style="width: 100%; height: 300px;" class="py-4"></div>
+<div bind:this={chartElement} id="main" style="width: 100%; height: 250px;" class="py-4"></div>

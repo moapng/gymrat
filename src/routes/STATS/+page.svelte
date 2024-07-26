@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { IExerciseLog } from '$lib/interfaces';
-	import LineChart from './LineChart.svelte';
-	import PieChart from './PieChart.svelte';
+	import LineChart from '../LineChart.svelte';
 
 	let { data } = $props();
 
@@ -9,7 +7,6 @@
 	const percentage = $state(((unique_dates.length / 30) * 100).toPrecision(2));
 
 	let personal_records = $state(data.personal_records);
-	console.log(personal_records);
 </script>
 
 <section class="stats stats-vertical shadow">

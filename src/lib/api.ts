@@ -1,3 +1,4 @@
+import type { ActiveDay } from './interfaces';
 import { supabase } from './supabase';
 
 export const insert_exercise_log = async (
@@ -26,3 +27,21 @@ export const insert_exercise_log = async (
 	}
 	return { status, data };
 };
+
+
+export const fetch_exercise_and_pr_data = async (exercise_type: ActiveDay, exercise_name: string) => {
+	const exercises = await supabase
+		.from('exercises')
+		.select().eq('exercise_type', exercise_type);
+
+	const pr = await supabase
+		.from('personal_records')
+		.select().eq('exercise_name', exercise_name);
+
+	if (exercises.error || pr.error) {
+		console.error('Error fetching data:', exercises.error || pr.error);
+		return { exercises: [], pr: [] };
+	}
+
+	return { exercises: exercises.data, pr: pr.data };
+}

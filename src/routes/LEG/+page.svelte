@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Accordion } from '@skeletonlabs/skeleton';
 	import Exercise from '../Exercise.svelte';
+	import LineChart from '../LineChart.svelte';
 
 	let { data } = $props();
 </script>
@@ -15,6 +16,8 @@
 			<dd class="chip variant-filled-secondary">PR: <b>100kg</b></dd>
 			<dd class="chip variant-filled-primary">mål: <b>105kg</b></dd>
 		</dl>
+
+		<LineChart data={data.pr} min={40} />
 	</div>
 	<Accordion autocollapse>
 		{#each data.exercises as exercise}

@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as echarts from 'echarts';
-	import { colors, type IPersonalRecord } from '$lib/interfaces';
+	import {
+		dark_purple_rgb,
+		hot_pink_rgb,
+		kuromi_purple_rgb,
+		very_light_purple_rgb,
+		type IPersonalRecord
+	} from '$lib/interfaces';
 
-	// Define props and ensure they conform to the IPersonalRecord interface
-	export let data: IPersonalRecord[];
+	let { data, min }: { data: IPersonalRecord[]; min: number } = $props();
 
 	const exercise_names = [...new Set(data.map((PR) => PR.exercise_name))];
 	const dates = [...new Set(data.map((PR) => PR.date))].sort(
@@ -30,7 +35,7 @@
 			smooth: true,
 			lineStyle: {
 				width: 4,
-				color: colors[i]
+				color: hot_pink_rgb
 			},
 			showSymbol: true,
 			emphasis: {
@@ -43,8 +48,8 @@
 				fontSize: 12,
 				fontWeight: 'bold',
 				fontFamily: 'Arial, sans-serif',
-				color: '#4d306f',
-				backgroundColor: colors[i],
+				color: dark_purple_rgb,
+				backgroundColor: hot_pink_rgb,
 				borderRadius: 6,
 				padding: [6, 4],
 				rotate: 45,
@@ -54,18 +59,32 @@
 	});
 
 	let options = {
-		color: colors,
+		color: hot_pink_rgb,
 		tooltip: {
 			trigger: 'axis',
 			axisPointer: {
 				type: 'cross',
 				label: {
-					backgroundColor: '#6a7985'
+					backgroundColor: hot_pink_rgb
 				}
+			},
+			backgroundColor: very_light_purple_rgb,
+			borderColor: dark_purple_rgb,
+			borderWidth: 1,
+			borderRadius: 6,
+			textStyle: {
+				color: dark_purple_rgb
 			}
 		},
 		legend: {
-			data: exercise_names
+			data: exercise_names,
+			backgroundColor: very_light_purple_rgb,
+			borderColor: dark_purple_rgb,
+			borderWidth: 1,
+			borderRadius: 6,
+			textStyle: {
+				color: dark_purple_rgb
+			}
 		},
 		grid: {
 			left: '8%',
@@ -77,12 +96,35 @@
 			{
 				type: 'category',
 				boundaryGap: false,
-				data: dates
+				data: dates,
+				axisLabel: {
+					color: dark_purple_rgb
+				},
+				axisLine: {
+					lineStyle: {
+						color: dark_purple_rgb
+					}
+				}
 			}
 		],
 		yAxis: [
 			{
-				type: 'value'
+				type: 'value',
+				min: min,
+				axisLabel: {
+					color: dark_purple_rgb
+				},
+				axisLine: {
+					lineStyle: {
+						color: dark_purple_rgb
+					}
+				},
+				splitLine: {
+					show: true,
+					lineStyle: {
+						color: kuromi_purple_rgb
+					}
+				}
 			}
 		],
 		series: series_data
@@ -98,4 +140,4 @@
 	});
 </script>
 
-<div bind:this={chartElement} id="main" style="width: 100%; height: 400px;"></div>
+<div bind:this={chartElement} id="main" style="width: 100%; height: 300px;" class="py-4"></div>

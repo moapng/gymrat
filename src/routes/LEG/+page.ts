@@ -1,12 +1,6 @@
-import { supabase } from '$lib/supabase';
+import { fetch_exercise_and_pr_data } from '$lib/api';
+import { ActiveDay } from '$lib/interfaces';
 
 export const load = async () => {
-	const { data, error } = await supabase.from('exercises').select('*').eq('exercise_type', 'LEG');
-
-	if (error) {
-		console.error('Error fetching exercises:', error);
-		return { exercises: [] };
-	}
-
-	return { exercises: data };
+	return fetch_exercise_and_pr_data(ActiveDay.LEG, 'Squat')
 };

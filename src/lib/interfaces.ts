@@ -33,15 +33,10 @@ export enum ActiveDay {
 	CORE = 'CORE',
 	// CARDIO = 'CARDIO'
 }
-export const colors = [
-	'#81AEEF',
-	'#6ACFF0',
-	'#7CEAF4',
-	'#58EECE',
-	'#79F685',
-	'#FAAF75',
-	'#FF99A0',
-	'#EA9ADB',
-	'#B99AEA',
-	'#93BAF1'
-];
+
+
+// colors
+export const hot_pink_rgb = 'rgb(244, 81, 211)';
+export const dark_purple_rgb = 'rgb(65, 0, 119)';
+export const kuromi_purple_rgb = 'rgb(173, 82, 248)';
+export const very_light_purple_rgb = 'rgb(194, 152, 230)';

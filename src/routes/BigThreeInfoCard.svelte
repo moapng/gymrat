@@ -12,7 +12,7 @@
 </script>
 
 <div
-	class="card p-4 variant-ghost-primary
+	class="card p-4 variant-soft-primary
 		absolute top-1 inset-x-1"
 >
 	<h1 class="h1 text-center py-2">{title} & komplement</h1>

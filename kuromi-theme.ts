@@ -13,12 +13,12 @@ export const kuromiTheme: CustomThemeConfig = {
 		"--theme-rounded-container": "24px",
 		"--theme-border-base": "1px",
 		// =~= Theme On-X Colors =~=
-		"--on-primary": "0 0 0",
-		"--on-secondary": "0 0 0",
-		"--on-tertiary": "0 0 0",
-		"--on-success": "0 0 0",
-		"--on-warning": "0 0 0",
-		"--on-error": "0 0 0",
+		"--on-primary": "65 0 119",
+		"--on-secondary": "65 0 119",
+		"--on-tertiary": "65 0 119",
+		"--on-success": "65 0 119",
+		"--on-warning": "65 0 119",
+		"--on-error": "65 0 119",
 		"--on-surface": "var(--color-primary-50)",
 		// =~= Theme Colors  =~=
 		// primary | #a65efd 

@@ -3,15 +3,10 @@
 	import { AccordionItem } from '@skeletonlabs/skeleton';
 	import WeightAndRepInputs from './WeightAndRepInputs.svelte';
 
-	type Props = {
-		exercise: IExercise;
-	};
-
-	//@ts-ignore
-	let { exercise } = $props<Props>();
+	let { exercise }: { exercise: IExercise } = $props();
 </script>
 
-<AccordionItem class="variant-ghost-primary">
+<AccordionItem class="variant-soft-primary">
 	<svelte:fragment slot="summary">
 		{exercise.exercise_name}
 	</svelte:fragment>

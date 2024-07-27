@@ -77,7 +77,7 @@
 		},
 		grid: {
 			bottom: '5%',
-			top: '14%',
+			top: '18%',
 			containLabel: true
 		},
 		xAxis: [

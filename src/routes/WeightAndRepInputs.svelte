@@ -37,6 +37,8 @@
 						background: 'bg-gradient-to-r from-success-500 to-success-400',
 						classes: 'border-4 border-success-500'
 					});
+					input_weight = null;
+					input_repetitions = null;
 				}
 			} catch (error) {
 				toast_store.trigger({
@@ -72,12 +74,12 @@
 	};
 </script>
 
-<div class="flex">
-	<div class="w-1/2 relative flex items-center h-12">
+<div class="flex justify-around">
+	<div class="w-32 relative flex items-center h-12">
 		<button
 			type="button"
 			id="decrement-button"
-			onclick={() => (input_weight = input_weight - 2.5)}
+			onclick={() => (input_weight = input_weight! - 2.5)}
 			class="variant-filled-secondary rounded-s-lg p-3 h-full
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
@@ -137,7 +139,7 @@
 		<button
 			type="button"
 			id="increment-button"
-			onclick={() => (input_weight = input_weight + 2.5)}
+			onclick={() => (input_weight = input_weight! + 2.5)}
 			class="variant-filled-primary rounded-e-lg p-3 h-full
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
@@ -159,11 +161,11 @@
 		</button>
 	</div>
 
-	<div class="w-1/2 relative flex items-center">
+	<div class="w-32 relative flex items-center">
 		<button
 			type="button"
 			id="decrement-button"
-			onclick={() => (input_repetitions = input_repetitions - 1)}
+			onclick={() => (input_repetitions = input_repetitions! - 1)}
 			class="variant-filled-secondary rounded-s-lg p-3 h-full
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>
@@ -215,7 +217,7 @@
 		<button
 			type="button"
 			id="increment-button"
-			onclick={() => (input_repetitions = input_repetitions + 1)}
+			onclick={() => (input_repetitions = input_repetitions! + 1)}
 			class="variant-filled-primary rounded-e-lg p-3 h-full
 			focus:ring-secondary-400 focus:ring-2 focus:outline-none"
 		>

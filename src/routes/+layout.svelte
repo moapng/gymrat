@@ -20,13 +20,11 @@
 		current_user.set(get(user));
 		// logs = data.logs;
 	});
-
-	const active_days = [ActiveDay.PUSH, ActiveDay.PULL, ActiveDay.LEG, ActiveDay.CORE];
 </script>
 
 <main
 	class="bg-gradient-to-br from-surface-200 to-surface-300
-	h-full flex flex-col-reverse"
+	h-full"
 >
 	{#if !$current_user}
 		<button class="btn variant-filled-primary" onclick={() => login()}> logga in </button>
@@ -36,7 +34,7 @@
 		{@render children()}
 	{/if}
 	<button
-		class="btn w-full variant-soft-primary object-bottom order-first"
+		class="btn w-full variant-soft-primary absolute bottom-0"
 		onclick={() => drawer_store.open()}
 	>
 		meny
@@ -46,27 +44,22 @@
 <Drawer position="bottom" height="h-auto">
 	<nav
 		class="card p-4 m-4 grid grid-cols-2 absolute inset-x-0 bottom-0 gap-2
-		bg-gradient-to-r from-secondary-300 to-secondary-400"
+		bg-gradient-to-r from-primary-300 to-primary-400"
 	>
-		{#each active_days as active_day}
-			<a
-				href={`${base}/${active_day}`}
-				onclick={() => drawer_store.close()}
-				class="btn variant-glass-primary
-				p-4
-				text-center text-2xl">{active_day}</a
-			>
-		{/each}
-
 		<a
-			href={`${base}/STATS`}
-			class="btn variant-glass-primary
-			p-4 col-span-2
-			text-center text-2xl"
+			href={`${base}/workout`}
 			onclick={() => drawer_store.close()}
+			class="btn variant-glass-primary
+				p-4
+				text-center text-2xl">workout</a
 		>
-			STATS
-		</a>
+		<a
+			href={`${base}/training_max`}
+			onclick={() => drawer_store.close()}
+			class="btn variant-glass-primary
+				p-4
+				text-center text-2xl">t maxx</a
+		>
 	</nav>
 </Drawer>
 

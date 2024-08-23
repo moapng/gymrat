@@ -1,19 +1,26 @@
 <script lang="ts">
-	import { insert_exercise_log } from '$lib/api';
+	import { get_current_cycle, insert_exercise_log, insert_set_with_pr_check } from '$lib/api';
+	import type { ICycle } from '$lib/interfaces';
 	import { user } from '$lib/stores/user';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import type { User } from '@supabase/supabase-js';
 	import { tick } from 'svelte';
 	import { get } from 'svelte/store';
 
-	let { exercise_id } = $props();
+	let {
+		current_cycle,
+		current_week,
+		set_number,
+		lift_name
+	}: { current_cycle: ICycle; current_week: number; set_number: number; lift_name: string } =
+		$props();
 
 	let input_weight: number | null = $state(null);
 	let input_repetitions: number | null = $state(null);
 	const current_user: User = $state(get(user)) as User;
 	const toast_store = getToastStore();
 
-	const onsubmit = async () => {
+	const on_submit = async () => {
 		if (
 			current_user &&
 			current_user?.role === 'superduper' &&
@@ -21,17 +28,43 @@
 			input_repetitions !== 0
 		) {
 			try {
-				let response = await insert_exercise_log(
-					exercise_id as string,
+				let response = await insert_set_with_pr_check(
+					current_cycle.id,
+					lift_name,
+					current_week,
+					new Date(),
 					input_weight as number,
 					input_repetitions as number,
-					new Date(),
-					99
+					set_number
 				);
-				if (response.status === 201) {
+				console.log(response);
+				//@ts-ignore
+				if (response.is_pr === true) {
 					tick();
 					toast_store.trigger({
-						message: 'uppdaterat databasen',
+						message: '!! NYTT PR !!',
+						hideDismiss: true,
+						timeout: 5000,
+						background: 'bg-gradient-to-r from-tertiary-500 to-tertiary-400',
+						classes: 'border-4 border-success-500'
+					});
+				}
+				if (response.insert_set_status === 201) {
+					tick();
+					toast_store.trigger({
+						message: 'settet ligger i db',
+						hideDismiss: true,
+						timeout: 5000,
+						background: 'bg-gradient-to-r from-success-500 to-success-400',
+						classes: 'border-4 border-success-500'
+					});
+					input_weight = null;
+					input_repetitions = null;
+				}
+				if (response.insert_pr_status === 201) {
+					tick();
+					toast_store.trigger({
+						message: 'wihoo nytt pr ligger i db',
 						hideDismiss: true,
 						timeout: 5000,
 						background: 'bg-gradient-to-r from-success-500 to-success-400',
@@ -42,6 +75,7 @@
 				}
 			} catch (error) {
 				toast_store.trigger({
+					//@ts-ignore
 					message: error.message,
 					hideDismiss: true,
 					timeout: 5000,
@@ -70,10 +104,13 @@
 		}
 	};
 	const onkeyup = (e: KeyboardEvent) => {
-		if (e.key === 'Enter') onsubmit();
+		if (e.key === 'Enter') on_submit();
 	};
 </script>
 
+<div>
+	<h2>Set {set_number}</h2>
+</div>
 <div class="flex justify-around">
 	<div class="w-32 relative flex items-center h-12">
 		<button

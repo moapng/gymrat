@@ -1,12 +1,9 @@
 <script lang="ts">
-	import '../app.postcss';
+	import '../app.scss';
 	let { children, data } = $props();
 </script>
 
-<main
-	class="bg-gradient-to-br from-surface-200 to-surface-300
-	h-full"
->
+<main class="bg-primary h-full w-full">
 	{@render children()}
 </main>
 

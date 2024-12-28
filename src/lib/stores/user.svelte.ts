@@ -1,15 +1,16 @@
-import { writable, type Writable } from 'svelte/store';
 import { supabase } from '$lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
-export const user: Writable<User | null> = writable();
+export const userState: { user: User | null } = $state({ user: null });
 
-supabase.auth.onAuthStateChange((event, session) => {
-	if (session) {
-		user.set(session.user);
-		supabase.auth.setSession({ access_token: session.access_token, refresh_token: session.refresh_token });
-	}
-});
+// supabase.auth.onAuthStateChange((event, session) => {
+// 	console.log(event)
+// 	if (session) {
+
+// 		userState.user = session.user;
+// 		supabase.auth.setSession({ access_token: session.access_token, refresh_token: session.refresh_token });
+// 	}
+// });
 
 export const login = async () => {
 	const { error } = await supabase.auth.signInWithOAuth({
@@ -28,5 +29,5 @@ export const login = async () => {
 
 export const logout = async () => {
 	await supabase.auth.signOut();
-	user.set(null);
+	userState.user = null;
 };

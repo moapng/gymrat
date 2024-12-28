@@ -1,16 +1,38 @@
 <script lang="ts">
-	import { login, user } from '$lib/stores/user';
-	import type { User } from '@supabase/supabase-js';
-	import { get, writable, type Writable } from 'svelte/store';
+	import Exercise from '$lib/components/Exercise.svelte';
+	import { login, userState } from '$lib/stores/user.svelte';
+	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
-	const current_user: Writable<User | null> = writable(get(user));
-	$: console.log($current_user);
+	let { data }: { data: PageData } = $props();
+
+	let RPE = $state(0);
+	onMount(() => {
+		const RPElocalStorage = localStorage.getItem('RPE');
+		if (RPElocalStorage) {
+			RPE = JSON.parse(RPElocalStorage);
+		}
+	});
+
+	$effect(() => {
+		localStorage.setItem('RPE', RPE.toString());
+	});
 </script>
 
-{#if $current_user && $current_user.role === 'authenticated'}
-	inlogggad <h1>{$current_user.user_metadata.user_name}</h1>
-{:else}
-	logga in bih
+<section class="flex flex-col items-center">
+	{#if process.env.NODE_ENV !== 'production' || userState.user}
+		<div class="flex w-full justify-between">
+			<p>{data.userData?.chosen_program_name}</p>
+			<p>{data.userData?.current_schema_cycle}</p>
+			<p>{data.userData?.current_texas_week}</p>
+		</div>
 
-	<button class="btn variant-filled-primary" onclick={() => login()}> logga in </button>
-{/if}
+		<Exercise {data} {RPE} />
+
+		<input type="number" bind:value={RPE} min="0" max="10" />
+	{:else}
+		logga in bih
+
+		<button class="btn btn-secondary" onclick={() => login()}> logga in </button>
+	{/if}
+</section>

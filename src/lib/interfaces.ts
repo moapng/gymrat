@@ -28,12 +28,19 @@ export interface OneRepMax {
 }
 
 export enum TexasFactor {
-	Deload = 0.68,
-	Volume = 0.85,
-	Intensity = 1
+	deload = 0.68,
+	volume = 0.85,
+	intensity = 1
+}
+
+export enum TexasRepititions {
+	deload = 5,
+	volume = 3,
+	intensity = 1
 }
 
 
 // Formulas
 export const calculateTexasMethod = (oneRM: number, factor: number) => oneRM * 0.87 * factor;
-export const calculateRPE = (oneRM: number, reps: number, rpe: number) => oneRM * (1 - ((reps - 1) * 0.03) - ((10 - rpe) * 0.025));
+export const calculateRPE = (oneRM: number, reps: number, rpe: number) =>
+	oneRM * (1 - ((reps - 1) * 0.03) + ((10 - rpe) * 0.025));

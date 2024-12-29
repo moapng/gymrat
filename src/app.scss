@@ -272,6 +272,10 @@ body {
   margin: 3rem;
 }
 
+.bottom {
+  position: fixed;
+  bottom: 0;
+}
 
 // Button
 .btn {
@@ -317,4 +321,18 @@ dd,
 dt {
   padding: 0;
   margin: 0;
+}
+
+input {
+  border: 2px solid $secondary-color;
+  padding: $padding;
+  outline: none;
+  background: $primary-color;
+  color: $text-primary-color;
+  max-width: 40px;
+
+
+  &:focus {
+    border-color: $text-secondary-color;
+  }
 }

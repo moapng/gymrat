@@ -13,6 +13,7 @@
 	let { data, RPE = $bindable(), repetitions = $bindable(), week } = $props();
 	let isOpen = $state({ [Lift.böj]: true, [Lift.bänk]: true, [Lift.mark]: true });
 	let popperVisible = $state(false);
+	let position = $state('above');
 
 	let oneRepMax: OneRepMax = $state({
 		[Lift.böj]: data.böj as number,
@@ -34,7 +35,8 @@
 		isOpen[exercise] = !isOpen[exercise];
 	};
 
-	const togglePopper = (e: Event) => {
+	const togglePopper = (e: Event, exercise: Lift) => {
+		exercise === Lift.mark ? (position = 'above') : (position = 'below');
 		if (!popperVisible) {
 			popperVisible = true;
 			referenceState.reference = e.currentTarget as HTMLElement;
@@ -61,7 +63,7 @@
 		{#if isOpen[exercise]}
 			<dd class="m-4 flex justify-between">
 				{calculatedWithTexasMethod[exercise]} x {TexasRepititions[week]}
-				<button class="btn btn-primary" onclick={(e) => togglePopper(e)}>
+				<button class="btn btn-primary" onclick={(e) => togglePopper(e, exercise)}>
 					<i class="material-symbols-outlined"> task_alt </i>
 				</button>
 			</dd>
@@ -75,7 +77,7 @@
 {@render exercise('mark')}
 
 {#if referenceState.reference}
-	<Popper bind:popperVisible>hej</Popper>
+	<Popper bind:popperVisible {position}>hej</Popper>
 {/if}
 
 <style>

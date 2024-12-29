@@ -2,20 +2,25 @@
 	import { referenceState } from '$lib/stores/reference.svelte';
 	import { onMount } from 'svelte';
 
-	let { children, popperVisible = $bindable() } = $props();
+	let { children, popperVisible = $bindable(), position = 'below' } = $props();
 	let popperElement: HTMLElement | undefined = $state();
 	let isFirstClick = $state(true);
 
 	const setPosition = () => {
 		if (referenceState.reference && popperElement) {
 			const referenceRect = referenceState.reference.getBoundingClientRect();
-
-			const bottom = window.innerHeight - referenceRect.bottom - 40;
-			let left = 0;
-
+			const popperRect = popperElement.getBoundingClientRect();
 			popperElement.style.position = 'absolute';
-			popperElement.style.bottom = `${bottom}px`;
-			popperElement.style.left = `${left}px`;
+
+			if (position === 'above') {
+				let bottom = window.innerHeight - referenceRect.top - popperRect.height;
+				popperElement.style.bottom = `${bottom}px`;
+			} else {
+				let top = referenceRect.bottom - popperRect.height * 2.5;
+				popperElement.style.top = `${top}px`;
+			}
+
+			popperElement.style.left = `0px`;
 		}
 	};
 

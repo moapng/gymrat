@@ -35,12 +35,12 @@
 	};
 
 	const togglePopper = (e: Event) => {
-		if (referenceState.reference === undefined) {
-			referenceState.reference = e.currentTarget as HTMLElement;
+		if (!popperVisible) {
 			popperVisible = true;
+			referenceState.reference = e.currentTarget as HTMLElement;
 		} else {
-			referenceState.reference = undefined;
 			popperVisible = false;
+			referenceState.reference = undefined;
 		}
 	};
 
@@ -74,8 +74,8 @@
 {@render exercise('bänk')}
 {@render exercise('mark')}
 
-{#if referenceState.reference && popperVisible}
-	<Popper {popperVisible}>hej</Popper>
+{#if referenceState.reference}
+	<Popper bind:popperVisible>hej</Popper>
 {/if}
 
 <style>

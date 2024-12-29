@@ -2,45 +2,53 @@
 	import { referenceState } from '$lib/stores/reference.svelte';
 	import { onMount } from 'svelte';
 
-	let { children } = $props();
-	let popperElement: HTMLElement;
+	let { children, popperVisible = $bindable() } = $props();
+	let popperElement: HTMLElement | undefined = $state();
+	let isFirstClick = $state(true);
 
 	const setPosition = () => {
 		if (referenceState.reference && popperElement) {
 			const referenceRect = referenceState.reference.getBoundingClientRect();
-			console.log(referenceRect);
-			let top = referenceRect.top - 300;
-			let left = 1;
+
+			const bottom = window.innerHeight - referenceRect.bottom - 40;
+			let left = 0;
 
 			popperElement.style.position = 'absolute';
-			popperElement.style.top = `${top}px`;
-			popperElement.style.left = `${left}vw`;
+			popperElement.style.bottom = `${bottom}px`;
+			popperElement.style.left = `${left}px`;
+		}
+	};
+
+	const handleClickOutside = (event: Event) => {
+		if (popperVisible) {
+			if (isFirstClick) {
+				isFirstClick = false;
+			} else if ((event.target as HTMLElement) !== popperElement) {
+				popperVisible = false;
+				referenceState.reference = undefined;
+			}
 		}
 	};
 
 	onMount(() => {
 		setPosition();
-		// window.addEventListener('resize', setPosition);
 	});
 </script>
 
-<div bind:this={popperElement} class="popper">
-	{@render children()}
-</div>
+<svelte:window onclick={(e) => handleClickOutside(e)} />
+
+{#if popperVisible}
+	<div
+		bind:this={popperElement}
+		id="popper"
+		class="bg-secondary text-secondary w-full flex justify-center"
+	>
+		{@render children()}
+	</div>
+{/if}
 
 <style>
-	.popper {
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		border: 1px solid #ccc;
-		padding: 10px;
-
-		background-color: tomato;
-		color: azure;
-
-		width: 90vw;
-		height: 20vh;
+	#popper {
+		height: 80px;
 	}
 </style>

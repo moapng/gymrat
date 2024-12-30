@@ -16,11 +16,12 @@ export interface supabaseCycle {
 	id: string; // uuid
 	started_at: Date; // timestamp with time zone
 	cycle: number; // bigint
-	benchpress_done: boolean; // boolean
-	squat_done: boolean; // boolean
-	deadlift_done: boolean; // boolean
+	bänk_done: boolean; // boolean
+	böj_done: boolean; // boolean
+	mark_done: boolean; // boolean
 	user_name: string; // text
 	program_name?: string; // text
+	texas_week: TexasWeek;
 }
 
 export interface supabaseProgram {
@@ -31,7 +32,6 @@ export interface supabaseProgram {
 export interface supabaseUser {
 	user_name: string; // text
 	chosen_program_name: string; // text
-	current_cycle: number; // bigint
 	current_texas_week: string; // public.texas_week (assuming it's a string representation)
 }
 export interface supabaseWorkout {
@@ -86,7 +86,3 @@ export enum TexasWeek {
 }
 
 
-// Formulas
-export const calculateTexasMethod = (oneRM: number, factor: number) => oneRM * 0.87 * factor;
-export const calculateRPE = (oneRM: number, reps: number, rpe: number) =>
-	oneRM * (1 - ((reps - 1) * 0.03) + ((10 - rpe) * 0.025));

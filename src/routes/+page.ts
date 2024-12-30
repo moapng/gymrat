@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { get1RM, getUserCycle, getUserProgramName, getUserTexasWeek } from '$lib/api';
+import { get1RM, getCycle, getTexasWeek, getUserCycleId, getUserProgramName } from '$lib/api';
 import { Lift } from '$lib/interfaces';
 import { userState } from '$lib/stores/user.svelte';
 import { cycleState, programState, texasWeekState } from '$lib/stores/workout.svelte';
@@ -16,8 +16,9 @@ export const load: PageLoad = async () => {
 		const userName = sessionObject?.user.user_metadata.user_name ?? 'moapng';
 		userState.user = sessionObject?.user;
 		programState.programName = await getUserProgramName(userName)
-		cycleState.cycle = await getUserCycle(userName)
-		texasWeekState.texasWeek = await getUserTexasWeek(userName);
+		const cycleId = await getUserCycleId(userName);
+		cycleState.cycle = await getCycle(cycleId);
+		texasWeekState.texasWeek = await getTexasWeek(cycleId)
 
 		const böj = await get1RM(Lift.böj)
 		const bänk = await get1RM(Lift.bänk);

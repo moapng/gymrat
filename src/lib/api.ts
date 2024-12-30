@@ -32,11 +32,11 @@ export const getUserProgramName = async (currentUser: string): Promise<string> =
 	}
 	return data ? data.chosen_program_name : '';
 }
-export const getUserTexasWeek = async (currentUser: string) => {
+export const getTexasWeek = async (cycleId: string) => {
 	const { data, error } = await supabase
-		.from('user')
-		.select('current_texas_week')
-		.eq('user_name', currentUser)
+		.from('cycle')
+		.select('texas_week')
+		.eq('id', cycleId)
 		.limit(1)
 		.single()
 
@@ -45,13 +45,13 @@ export const getUserTexasWeek = async (currentUser: string) => {
 		return null;
 	}
 
-	return data ? data.current_texas_week : null;
+	return data ? data.texas_week : null;
 }
 
-export const getUserCycle = async (currentUser: string) => {
+export const getUserCycleId = async (currentUser: string) => {
 	const { data, error } = await supabase
 		.from('user')
-		.select('current_cycle')
+		.select('cycle_id')
 		.eq('user_name', currentUser)
 		.limit(1)
 		.single()
@@ -60,9 +60,51 @@ export const getUserCycle = async (currentUser: string) => {
 		console.error('Error fetching user:', error);
 		return null;
 	}
+	return data ? data.cycle_id : null;
+}
 
-	return data ? data.current_cycle : null;
+export const getCycle = async (cycleId: string) => {
+	const { data: cycle, error } = await supabase
+		.from('cycle')
+		.select('*')
+		.eq('id', cycleId)
+		.limit(1)
+		.single()
+	if (error) {
+		console.error('Error fetching user:', error);
+		return null;
+	}
 
+	return cycle ? cycle : null;
+}
+
+export const insertNewCycle = async (latestCycle: number, userName: string, programName: string) => {
+	const { data, error } = await supabase
+		.from('cycle')
+		.insert([
+			{
+				cycle: latestCycle + 1,
+				'user_name': userName ?? 'moapng',
+				'program_name': programName
+			},
+		])
+		.select()
+		.limit(1)
+		.single();
+
+	if (error) return error;
+	return data;
+}
+
+export const updateCycle = async (cycleId: string, column: string, value: any) => {
+	const { data, error } = await supabase
+		.from('cycle')
+		.update({ [column]: value })
+		.eq('id', cycleId)
+		.select();
+
+	if (error) return error;
+	return data;
 }
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string) => {

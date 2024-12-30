@@ -10,27 +10,13 @@
 
 	let RPE = $state(0);
 	let repetitions: TexasRepetitions = $state(5);
-	let week: TexasWeek = $state(TexasWeek.deload);
 
 	onMount(() => {
 		const RPElocalStorage = localStorage.getItem('RPE');
 		if (RPElocalStorage) {
 			RPE = JSON.parse(RPElocalStorage);
 		}
-		switch (texasWeekState.texasWeek) {
-			case TexasWeek.deload:
-				repetitions = TexasRepetitions.deload;
-				week = TexasWeek.deload;
-				break;
-			case TexasWeek.volume:
-				repetitions = TexasRepetitions.volume;
-				week = TexasWeek.volume;
-				break;
-			case TexasWeek.intensity:
-				repetitions = TexasRepetitions.intensity;
-				week = TexasWeek.intensity;
-				break;
-		}
+		repetitions = TexasRepetitions[texasWeekState.texasWeek];
 	});
 
 	$effect(() => {
@@ -40,17 +26,14 @@
 
 <header class="flex w-full justify-between">
 	<p>{programState.programName}</p>
-	<p>{cycleState.cycle}</p>
-	<p>{week}</p>
+	<p>{cycleState.cycle?.cycle}</p>
+	<p>{texasWeekState.texasWeek}</p>
 </header>
 <section class="flex flex-col w-full items-center bottom">
 	{#if process.env.NODE_ENV !== 'production' || userState.user}
-		<Lift {data} bind:RPE bind:repetitions {week} />
+		<Lift {data} bind:RPE bind:repetitions />
 
-		<div class="flex flex-row">
-			<input type="text" bind:value={repetitions} inputmode="numeric" />
-			<input type="text" bind:value={RPE} inputmode="decimal" />
-		</div>
+		<button class="btn btn-primary w-full">xxx</button>
 	{:else}
 		logga in bih
 

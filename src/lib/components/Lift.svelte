@@ -1,21 +1,15 @@
 <script lang="ts">
-	import {
-		calculateRPE,
-		calculateTexasMethod,
-		Lift,
-		TexasFactor,
-		TexasRepetitions,
-		type OneRepMax
-	} from '$lib/interfaces';
-	import { referenceState } from '$lib/stores/reference.svelte';
+	import { Lift, TexasFactor, TexasRepetitions, type OneRepMax } from '$lib/interfaces';
+	import { calculateRPE, calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
+	import { popperVisibleState, referenceState } from '$lib/stores/popper.svelte';
+	import { cycleState, texasWeekState } from '$lib/stores/workout.svelte';
 	import Popper from './Popper.svelte';
 	import RateSet from './RateSet.svelte';
 
-	let { data, RPE = $bindable(), repetitions = $bindable(), week } = $props();
+	let { data, RPE = $bindable(), repetitions = $bindable() } = $props();
 	let isOpen = $state({ [Lift.böj]: true, [Lift.bänk]: true, [Lift.mark]: true });
-	let popperVisible = $state(false);
 	let position = $state('above');
-	let lift: Lift = $state(Lift.böj);
+	let liftOpen: Lift = $state(Lift.böj);
 
 	let oneRepMax: OneRepMax = $state({
 		[Lift.böj]: data.böj as number,
@@ -24,7 +18,9 @@
 	});
 	let calculatedWithTexasMethod: OneRepMax = Object.entries(oneRepMax)
 		.map(([key, value]) => {
-			return { [key]: calculateTexasMethod(value, +TexasFactor[week]) };
+			const texasValue = calculateTexasMethod(value, +TexasFactor[texasWeekState.texasWeek]);
+
+			return { [key]: roundToNearestTwoPointFive(texasValue) };
 		})
 		.reduce((acc, cur) => ({ ...acc, ...cur }), {} as OneRepMax);
 	let calculatedWithRPE: OneRepMax = $state({
@@ -39,12 +35,12 @@
 
 	const togglePopper = (e: Event, lift: Lift) => {
 		lift === Lift.mark ? (position = 'above') : (position = 'below');
-		if (!popperVisible) {
-			lift = lift;
-			popperVisible = true;
+		if (!popperVisibleState.visible) {
+			liftOpen = lift;
+			popperVisibleState.visible = true;
 			referenceState.reference = e.currentTarget as HTMLElement;
 		} else {
-			popperVisible = false;
+			popperVisibleState.visible = false;
 			referenceState.reference = undefined;
 		}
 	};
@@ -61,16 +57,15 @@
 {#snippet liftSnippet(lift: Lift)}
 	<dl class="bg-secondary text-secondary w-full align-center">
 		<button onclick={() => toggleAccordion(lift)} class="btn btn-primary w-full">
-			<dt>{lift}</dt>
+			<dt>{lift} {cycleState.cycle?.[`${lift}_done`]}</dt>
 		</button>
 		{#if isOpen[lift]}
 			<dd class="m-4 flex justify-between">
-				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[week]}
+				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[texasWeekState.texasWeek]}
 				<button class="btn btn-primary" onclick={(e) => togglePopper(e, lift)}>
 					<i class="material-symbols-outlined"> task_alt </i>
 				</button>
 			</dd>
-			<!-- <dd class="m-4">{calculatedWithRPE[lift]}</dd> -->
 		{/if}
 	</dl>
 {/snippet}
@@ -80,9 +75,13 @@
 {@render liftSnippet(Lift.mark)}
 
 {#if referenceState.reference}
-	<Popper bind:popperVisible {position}>
-		<div>uppvärmning klar?</div>
-		<RateSet {lift} weight={calculatedWithTexasMethod[lift]} repetitions={TexasRepetitions[week]} />
+	<Popper {position}>
+		<p>hur kändes setet?</p>
+		<RateSet
+			lift={liftOpen}
+			weight={calculatedWithTexasMethod[liftOpen]}
+			repetitions={TexasRepetitions[texasWeekState.texasWeek]}
+		/>
 	</Popper>
 {/if}
 

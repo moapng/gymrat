@@ -1,32 +1,34 @@
 <script lang="ts">
-	import Exercise from '$lib/components/Exercise.svelte';
 	import { login, userState } from '$lib/stores/user.svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import Lift from '$lib/components/Lift.svelte';
+	import { TexasRepetitions, TexasWeek } from '$lib/interfaces';
+	import { cycleState, programState, texasWeekState } from '$lib/stores/workout.svelte';
 
 	let { data }: { data: PageData } = $props();
 
 	let RPE = $state(0);
-	let repetitions = $state(5);
-	let week = $state('volume');
+	let repetitions: TexasRepetitions = $state(5);
+	let week: TexasWeek = $state(TexasWeek.deload);
 
 	onMount(() => {
 		const RPElocalStorage = localStorage.getItem('RPE');
 		if (RPElocalStorage) {
 			RPE = JSON.parse(RPElocalStorage);
 		}
-		switch (data.userData?.current_texas_week) {
-			case 'deload':
-				repetitions = 5;
-				week = 'deload';
+		switch (texasWeekState.texasWeek) {
+			case TexasWeek.deload:
+				repetitions = TexasRepetitions.deload;
+				week = TexasWeek.deload;
 				break;
-			case 'volume':
-				repetitions = 3;
-				week = 'volume';
+			case TexasWeek.volume:
+				repetitions = TexasRepetitions.volume;
+				week = TexasWeek.volume;
 				break;
-			case 'intensity':
-				repetitions = 1;
-				week = 'intensity';
+			case TexasWeek.intensity:
+				repetitions = TexasRepetitions.intensity;
+				week = TexasWeek.intensity;
 				break;
 		}
 	});
@@ -37,13 +39,13 @@
 </script>
 
 <header class="flex w-full justify-between">
-	<p>{data.userData?.chosen_program_name}</p>
-	<p>{data.userData?.current_schema_cycle}</p>
+	<p>{programState.programName}</p>
+	<p>{cycleState.cycle}</p>
 	<p>{week}</p>
 </header>
 <section class="flex flex-col w-full items-center bottom">
 	{#if process.env.NODE_ENV !== 'production' || userState.user}
-		<Exercise {data} bind:RPE bind:repetitions {week} />
+		<Lift {data} bind:RPE bind:repetitions {week} />
 
 		<div class="flex flex-row">
 			<input type="text" bind:value={repetitions} inputmode="numeric" />

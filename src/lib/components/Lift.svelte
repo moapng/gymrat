@@ -4,16 +4,18 @@
 		calculateTexasMethod,
 		Lift,
 		TexasFactor,
-		TexasRepititions,
+		TexasRepetitions,
 		type OneRepMax
 	} from '$lib/interfaces';
 	import { referenceState } from '$lib/stores/reference.svelte';
 	import Popper from './Popper.svelte';
+	import RateSet from './RateSet.svelte';
 
 	let { data, RPE = $bindable(), repetitions = $bindable(), week } = $props();
 	let isOpen = $state({ [Lift.böj]: true, [Lift.bänk]: true, [Lift.mark]: true });
 	let popperVisible = $state(false);
 	let position = $state('above');
+	let lift: Lift = $state(Lift.böj);
 
 	let oneRepMax: OneRepMax = $state({
 		[Lift.böj]: data.böj as number,
@@ -31,13 +33,14 @@
 		[Lift.mark]: 0
 	});
 
-	const toggleAccordion = async (exercise: 'böj' | 'bänk' | 'mark') => {
-		isOpen[exercise] = !isOpen[exercise];
+	const toggleAccordion = async (lift: 'böj' | 'bänk' | 'mark') => {
+		isOpen[lift] = !isOpen[lift];
 	};
 
-	const togglePopper = (e: Event, exercise: Lift) => {
-		exercise === Lift.mark ? (position = 'above') : (position = 'below');
+	const togglePopper = (e: Event, lift: Lift) => {
+		lift === Lift.mark ? (position = 'above') : (position = 'below');
 		if (!popperVisible) {
+			lift = lift;
 			popperVisible = true;
 			referenceState.reference = e.currentTarget as HTMLElement;
 		} else {
@@ -55,29 +58,32 @@
 	});
 </script>
 
-{#snippet exercise(exercise: 'böj' | 'bänk' | 'mark')}
+{#snippet liftSnippet(lift: Lift)}
 	<dl class="bg-secondary text-secondary w-full align-center">
-		<button onclick={() => toggleAccordion(exercise)} class="btn btn-primary w-full">
-			<dt>{exercise}</dt>
+		<button onclick={() => toggleAccordion(lift)} class="btn btn-primary w-full">
+			<dt>{lift}</dt>
 		</button>
-		{#if isOpen[exercise]}
+		{#if isOpen[lift]}
 			<dd class="m-4 flex justify-between">
-				{calculatedWithTexasMethod[exercise]} x {TexasRepititions[week]}
-				<button class="btn btn-primary" onclick={(e) => togglePopper(e, exercise)}>
+				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[week]}
+				<button class="btn btn-primary" onclick={(e) => togglePopper(e, lift)}>
 					<i class="material-symbols-outlined"> task_alt </i>
 				</button>
 			</dd>
-			<!-- <dd class="m-4">{calculatedWithRPE[exercise]}</dd> -->
+			<!-- <dd class="m-4">{calculatedWithRPE[lift]}</dd> -->
 		{/if}
 	</dl>
 {/snippet}
 
-{@render exercise('böj')}
-{@render exercise('bänk')}
-{@render exercise('mark')}
+{@render liftSnippet(Lift.böj)}
+{@render liftSnippet(Lift.bänk)}
+{@render liftSnippet(Lift.mark)}
 
 {#if referenceState.reference}
-	<Popper bind:popperVisible {position}>hej</Popper>
+	<Popper bind:popperVisible {position}>
+		<div>uppvärmning klar?</div>
+		<RateSet {lift} weight={calculatedWithTexasMethod[lift]} repetitions={TexasRepetitions[week]} />
+	</Popper>
 {/if}
 
 <style>

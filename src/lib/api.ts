@@ -1,10 +1,11 @@
 import { supabase } from './supabase';
+import type { Lift } from './interfaces';
 
-export const get1RM = async (exercise: 'böj' | 'bänk' | 'mark'): Promise<number> => {
+export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number> => {
 	const { data: PR, error } = await supabase
 		.from('PR')
 		.select('weight')
-		.eq('exercise', exercise)
+		.eq('lift', lift)
 		.order('weight', { ascending: false })
 		.limit(1);
 
@@ -16,38 +17,86 @@ export const get1RM = async (exercise: 'böj' | 'bänk' | 'mark'): Promise<numbe
 	return PR && PR.length > 0 ? PR[0].weight : 0;
 };
 
-export const getProgram = async (currentUser: string): Promise<{ formula: string, name: string }> => {
+export const getUserProgramName = async (currentUser: string): Promise<string> => {
 
-	const { data: user, error: errorUser } = await supabase
+	const { data, error } = await supabase
 		.from('user')
 		.select('chosen_program_name')
-		.eq('user_name', currentUser);
-	if (errorUser) {
-		console.error('Error fetching user:', errorUser);
-		return { formula: '', name: '' };
-	}
-	const { data: program, error } = await supabase
-		.from('program')
-		.select('formula, name')
-		.eq('name', user[0]?.chosen_program_name)
-		.limit(1);
+		.eq('user_name', currentUser)
+		.limit(1)
+		.single();
 
 	if (error) {
 		console.error('Error fetching formula:', error);
-		return { formula: '', name: '' };
+		return '';
 	}
-	return program && program.length > 0 ? program[0] : { formula: '', name: '' };
+	return data ? data.chosen_program_name : '';
 }
-export const getUser = async (currentUser: string) => {
-	const { data: user, error } = await supabase
+export const getUserTexasWeek = async (currentUser: string) => {
+	const { data, error } = await supabase
 		.from('user')
-		.select('*')
-		.eq('user_name', currentUser);
+		.select('current_texas_week')
+		.eq('user_name', currentUser)
+		.limit(1)
+		.single()
 
 	if (error) {
 		console.error('Error fetching user:', error);
 		return null;
 	}
 
-	return user && user.length > 0 ? user[0] : null;
+	return data ? data.current_texas_week : null;
+}
+
+export const getUserCycle = async (currentUser: string) => {
+	const { data, error } = await supabase
+		.from('user')
+		.select('current_cycle')
+		.eq('user_name', currentUser)
+		.limit(1)
+		.single()
+
+	if (error) {
+		console.error('Error fetching user:', error);
+		return null;
+	}
+
+	return data ? data.current_cycle : null;
+
+}
+
+export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string) => {
+
+	const { data, error } = await supabase
+		.from('workout')
+		.insert([
+			{
+				lift: lift,
+				weight: weight,
+				repetitions: repetitions,
+				workout_rating: workoutRating,
+				cycle_id: cycleId,
+				program_name: programName
+			},
+		])
+		.select()
+
+	if (error) return error;
+	return data;
+
+}
+
+export const getLatestCycle = async (currentUser: string) => {
+
+	const { data: cycle, error } = await supabase
+		.from('cycle')
+		.select('*')
+		.eq('user_name', currentUser)
+		.order('started_at', { ascending: false })
+		.limit(1)
+		.single();
+
+	if (error) return error;
+	return cycle ? cycle : null;
+
 }

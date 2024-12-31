@@ -28,7 +28,6 @@
 		if (popperVisibleState.visible) {
 			if (isFirstClick) {
 				isFirstClick = false;
-				console.log(event.target);
 			} else if (
 				popperElement &&
 				(event.target as HTMLElement) !== popperElement &&
@@ -56,9 +55,3 @@
 		{@render children()}
 	</div>
 {/if}
-
-<style>
-	#popper {
-		/* height: 80px; */
-	}
-</style>

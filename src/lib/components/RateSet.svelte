@@ -14,7 +14,6 @@
 		const cycle = cycleState.cycle;
 
 		if (cycle) {
-			console.log(lift);
 			const workoutResponse = await insertWorkout(
 				lift,
 				weight,
@@ -43,7 +42,6 @@
 
 			popperVisibleState.visible = false;
 			// if (cycle?.böj_done && cycle?.bänk_done && cycle?.mark_done) {
-			// 	console.log('cycle done, create new cycle');
 			// 	const response = await insertNewCycle(
 			// 		cycle.cycle,
 			// 		userState.user?.user_metadata.user_name,
@@ -59,7 +57,7 @@
 
 <div class="grid grid-cols-3">
 	{#each ratings as rating}
-		<button onclick={() => handleClick(rating)}>{rating}</button>
+		<button class="btn" onclick={() => handleClick(rating)}>{rating}</button>
 	{/each}
 	<input type="checkbox" bind:checked={allSetsDone} />
 	<input type="checkbox" bind:checked={isPR} />
@@ -67,7 +65,7 @@
 
 <style>
 	button {
-		font-size: 2rem;
+		font-size: 1rem;
 		background-color: violet;
 	}
 </style>

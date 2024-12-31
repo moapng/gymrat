@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Lift } from './interfaces';
+import type { Lift, supabaseCycle, supabaseWorkout } from './interfaces';
 
 export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number> => {
 	const { data: PR, error } = await supabase
@@ -78,7 +78,7 @@ export const getCycle = async (cycleId: string) => {
 	return cycle ? cycle : null;
 }
 
-export const insertNewCycle = async (latestCycle: number, userName: string, programName: string): Promise<{ data: any; status: number }> => {
+export const insertNewCycle = async (latestCycle: number, userName: string, programName: string): Promise<{ data: supabaseCycle; status: number }> => {
 	const { data, status, error } = await supabase
 		.from('cycle')
 		.insert([
@@ -92,7 +92,7 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 		.limit(1)
 		.single();
 
-	if (error) return { data: null, status: 500 };
+	if (error) console.error(error)
 	return { data, status };
 }
 
@@ -107,7 +107,7 @@ export const updateCycle = async (cycleId: string, column: string, value: any) =
 	return data;
 }
 
-export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: any; status: number }> => {
+export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number }> => {
 
 	const { data, status, error } = await supabase
 		.from('workout')
@@ -122,8 +122,10 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 			},
 		])
 		.select()
+		.limit(1)
+		.single();
 
-	if (error) return { data: null, status: 500 };
+	if (error) console.error(error);
 	return { data, status };
 }
 

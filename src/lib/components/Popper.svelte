@@ -51,7 +51,7 @@
 	<div
 		bind:this={popperElement}
 		id="popper"
-		class="bg-secondary text-secondary w-full flex justify-center"
+		class="bg-secondary text-secondary w-full flex justify-center h-fit shadow-lg"
 	>
 		{@render children()}
 	</div>
@@ -59,6 +59,6 @@
 
 <style>
 	#popper {
-		height: 80px;
+		/* height: 80px; */
 	}
 </style>

@@ -5,6 +5,7 @@
 	import Lift from '$lib/components/Lift.svelte';
 	import { TexasRepetitions, TexasWeek } from '$lib/interfaces';
 	import { cycleState, programState, texasWeekState } from '$lib/stores/workout.svelte';
+	import Toast from '$lib/components/Toast.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -40,3 +41,4 @@
 		<button class="btn btn-secondary" onclick={() => login()}> logga in </button>
 	{/if}
 </section>
+<Toast />

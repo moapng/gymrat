@@ -78,8 +78,8 @@ export const getCycle = async (cycleId: string) => {
 	return cycle ? cycle : null;
 }
 
-export const insertNewCycle = async (latestCycle: number, userName: string, programName: string) => {
-	const { data, error } = await supabase
+export const insertNewCycle = async (latestCycle: number, userName: string, programName: string): Promise<{ data: any; status: number }> => {
+	const { data, status, error } = await supabase
 		.from('cycle')
 		.insert([
 			{
@@ -92,8 +92,8 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 		.limit(1)
 		.single();
 
-	if (error) return error;
-	return data;
+	if (error) return { data: null, status: 500 };
+	return { data, status };
 }
 
 export const updateCycle = async (cycleId: string, column: string, value: any) => {
@@ -107,9 +107,9 @@ export const updateCycle = async (cycleId: string, column: string, value: any) =
 	return data;
 }
 
-export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string) => {
+export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: any; status: number }> => {
 
-	const { data, error } = await supabase
+	const { data, status, error } = await supabase
 		.from('workout')
 		.insert([
 			{
@@ -123,9 +123,25 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 		])
 		.select()
 
-	if (error) return error;
-	return data;
+	if (error) return { data: null, status: 500 };
+	return { data, status };
+}
 
+export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string) => {
+	const { data, status, error } = await supabase
+		.from('PR')
+		.insert([
+			{
+				lift: lift,
+				weight: weight,
+				repetitions: repetitions,
+				workout_id: workoutId
+			},
+		])
+		.select()
+
+	if (error) return { data: null, status: 500 };
+	return { data, status };
 }
 
 export const getLatestCycle = async (currentUser: string) => {

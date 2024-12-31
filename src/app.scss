@@ -5,6 +5,7 @@ $text-primary-color: #444f48;
 $text-secondary-color: #008170;
 $border-radius: 0.25rem;
 $padding: 0.5rem 1rem;
+$shadow-color: rgba(0, 0, 0, 0.5);
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -102,6 +103,23 @@ body {
 
 .h-auto {
   height: auto;
+}
+
+.h-fit {
+  height: fit-content;
+}
+
+// Shadows
+.shadow-sm {
+  box-shadow: 0 4px 8px $shadow-color;
+}
+
+.shadow-md {
+  box-shadow: 0 10px 20px $shadow-color;
+}
+
+.shadow-lg {
+  box-shadow: 0 20px 100px $shadow-color
 }
 
 // Grid Utilities

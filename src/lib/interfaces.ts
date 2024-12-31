@@ -85,4 +85,14 @@ export enum TexasWeek {
 	deload = 'deload'
 }
 
-
+export interface Toast {
+	text: string;
+	type: ToastType;
+	duration: number;
+}
+export enum ToastType {
+	info = 'info',
+	warning = 'warning',
+	error = 'error',
+	success = 'success'
+}

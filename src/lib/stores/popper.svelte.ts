@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Component } from 'svelte';
 
 export const referenceState: { reference: HTMLElement | undefined } = $state({ reference: undefined });
 
-export const popperState: { visible: boolean, component: Component<any> | null, props: object } = $state({ visible: false, component: null, props: {} });
+export const popperState: { visible: boolean, component: Component<any> | null, props: object, position: 'above' | 'below' } = $state({ visible: false, component: null, props: {}, position: 'above' });
 
 export const showPopper = <T extends Record<string, any>>(reference: HTMLElement, component: Component<T>, props: T) => {
 	referenceState.reference = reference;

@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { hidePopper, popperState, referenceState } from '$lib/stores/popper.svelte';
-	import { onMount } from 'svelte';
+	import { popperState, referenceState } from '$lib/stores/popper.svelte';
 
-	let { position = 'below' } = $props();
 	let popperElement: HTMLElement | undefined = $state();
 	let isFirstClick = $state(true);
 
@@ -11,12 +9,12 @@
 			const referenceRect = referenceState.reference.getBoundingClientRect();
 			const popperRect = popperElement.getBoundingClientRect();
 			popperElement.style.position = 'absolute';
-
-			if (position === 'above') {
-				let bottom = window.innerHeight - referenceRect.top - popperRect.height;
+			console.log('popperRect', popperRect, 'referenceRect', referenceRect);
+			if (popperState.position === 'above') {
+				let bottom = window.innerHeight - referenceRect.top;
 				popperElement.style.bottom = `${bottom}px`;
 			} else {
-				let top = referenceRect.bottom - popperRect.height * 2.5;
+				let top = referenceRect.bottom;
 				popperElement.style.top = `${top}px`;
 			}
 
@@ -40,7 +38,7 @@
 		}
 	};
 
-	onMount(() => {
+	$effect(() => {
 		setPosition();
 	});
 </script>

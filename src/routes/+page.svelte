@@ -6,10 +6,8 @@
 	import { TexasRepetitions, TexasWeek } from '$lib/interfaces';
 	import { cycleState, programState } from '$lib/stores/workout.svelte';
 	import Toast from '$lib/components/Toast.svelte';
-	import { insertNewCycle } from '$lib/api';
-	import { toastState } from '$lib/stores/toast.svelte';
-	import PR from '$lib/components/PR.svelte';
 	import Popper from '$lib/components/Popper.svelte';
+	import Footer from '$lib/components/Footer.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -27,36 +25,6 @@
 	$effect(() => {
 		localStorage.setItem('RPE', RPE.toString());
 	});
-
-	const setNextCycle = async () => {
-		if (cycleState.cycle?.cycle) {
-			let nextTexasWeek;
-			switch (cycleState.cycle.texas_week) {
-				case TexasWeek.deload:
-					nextTexasWeek = TexasWeek.volume;
-					break;
-				case TexasWeek.volume:
-					nextTexasWeek = TexasWeek.intensity;
-					break;
-				case TexasWeek.intensity:
-					nextTexasWeek = TexasWeek.deload;
-					break;
-			}
-
-			const response = await insertNewCycle(
-				cycleState.cycle?.cycle,
-				userState.user?.user_metadata.user_name,
-				programState.programName,
-				nextTexasWeek
-			);
-			if (response.status === 201) {
-				toastState.text = 'yay ny cykel';
-				toastState.type = 'success';
-				toastState.visible = true;
-				cycleState.cycle = response.data;
-			}
-		}
-	};
 </script>
 
 <header class="flex w-full justify-between">
@@ -68,8 +36,7 @@
 	{#if process.env.NODE_ENV !== 'production' || userState.user}
 		<Lift {data} bind:RPE bind:repetitions />
 
-		<PR />
-		<button class="btn btn-primary w-full" onclick={() => setNextCycle()}>nästa set</button>
+		<Footer />
 	{:else}
 		logga in bih
 

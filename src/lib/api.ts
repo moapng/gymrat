@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Lift, supabaseCycle, supabaseWorkout } from './interfaces';
+import type { Lift, supabaseCycle, supabaseWorkout, TexasWeek } from './interfaces';
 
 export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number> => {
 	const { data: PR, error } = await supabase
@@ -32,21 +32,6 @@ export const getUserProgramName = async (currentUser: string): Promise<string> =
 	}
 	return data ? data.chosen_program_name : '';
 }
-export const getTexasWeek = async (cycleId: string) => {
-	const { data, error } = await supabase
-		.from('cycle')
-		.select('texas_week')
-		.eq('id', cycleId)
-		.limit(1)
-		.single()
-
-	if (error) {
-		console.error('Error fetching user:', error);
-		return null;
-	}
-
-	return data ? data.texas_week : null;
-}
 
 export const getUserCycleId = async (currentUser: string) => {
 	const { data, error } = await supabase
@@ -78,14 +63,15 @@ export const getCycle = async (cycleId: string) => {
 	return cycle ? cycle : null;
 }
 
-export const insertNewCycle = async (latestCycle: number, userName: string, programName: string): Promise<{ data: supabaseCycle; status: number }> => {
+export const insertNewCycle = async (latestCycle: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseCycle; status: number }> => {
 	const { data, status, error } = await supabase
 		.from('cycle')
 		.insert([
 			{
 				cycle: latestCycle + 1,
 				'user_name': userName ?? 'moapng',
-				'program_name': programName
+				'program_name': programName,
+				'texas_week': texasWeek
 			},
 		])
 		.select()

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { insertPR, insertWorkout, updateCycle } from '$lib/api';
-	import { popperVisibleState } from '$lib/stores/popper.svelte';
+	import { popperState } from '$lib/stores/popper.svelte';
 	import { toastState } from '$lib/stores/toast.svelte';
 	import { cycleState, programState } from '$lib/stores/workout.svelte';
 
@@ -8,8 +8,6 @@
 
 	let allSetsDone = $state(false);
 	// TODO: automatisk om senaste setten e 4 av böj tex ?
-	let isPR = $state(false);
-	// TODO: automatisk PR
 	const handleClick = async (rating: string) => {
 		const cycle = cycleState.cycle;
 
@@ -36,19 +34,8 @@
 			if (allSetsDone && workoutResponse.data) {
 				updateCycle(cycle.id, column, true);
 			}
-			if (isPR && workoutResponse.data) {
-				insertPR(lift, weight, repetitions, workoutResponse.data.id);
-			}
 
-			popperVisibleState.visible = false;
-			// if (cycle?.böj_done && cycle?.bänk_done && cycle?.mark_done) {
-			// 	const response = await insertNewCycle(
-			// 		cycle.cycle,
-			// 		userState.user?.user_metadata.user_name,
-			// 		programState.programName
-			// 	);
-			// 	if (response) cycleState.cycle = response;
-			// }
+			popperState.visible = false;
 		}
 	};
 
@@ -60,7 +47,6 @@
 		<button class="btn" onclick={() => handleClick(rating)}>{rating}</button>
 	{/each}
 	<input type="checkbox" bind:checked={allSetsDone} />
-	<input type="checkbox" bind:checked={isPR} />
 </div>
 
 <style>

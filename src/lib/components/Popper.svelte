@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { popperVisibleState, referenceState } from '$lib/stores/popper.svelte';
+	import { popperState, referenceState } from '$lib/stores/popper.svelte';
 	import { onMount } from 'svelte';
 
-	let { children, position = 'below' } = $props();
+	let { position = 'below' } = $props();
 	let popperElement: HTMLElement | undefined = $state();
 	let isFirstClick = $state(true);
 
@@ -25,7 +25,7 @@
 	};
 
 	const handleClickOutside = (event: Event) => {
-		if (popperVisibleState.visible) {
+		if (popperState.visible) {
 			if (isFirstClick) {
 				isFirstClick = false;
 			} else if (
@@ -33,7 +33,7 @@
 				(event.target as HTMLElement) !== popperElement &&
 				!popperElement.contains(event.target as Node)
 			) {
-				popperVisibleState.visible = false;
+				popperState.visible = false;
 				referenceState.reference = undefined;
 			}
 		}
@@ -46,12 +46,14 @@
 
 <svelte:window onclick={(e) => handleClickOutside(e)} />
 
-{#if popperVisibleState.visible}
+{#if popperState.visible}
 	<div
 		bind:this={popperElement}
 		id="popper"
 		class="bg-secondary text-secondary w-full flex justify-center h-fit shadow-lg"
 	>
-		{@render children()}
+		{#if popperState.component}
+			<svelte:component this={popperState.component} {...popperState.props}></svelte:component>
+		{/if}
 	</div>
 {/if}

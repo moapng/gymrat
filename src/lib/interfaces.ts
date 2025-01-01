@@ -20,7 +20,7 @@ export interface supabaseCycle {
 	böj_done: boolean; // boolean
 	mark_done: boolean; // boolean
 	user_name: string; // text
-	program_name?: string; // text
+	program_name: string; // text
 	texas_week: TexasWeek;
 }
 
@@ -37,12 +37,12 @@ export interface supabaseUser {
 export interface supabaseWorkout {
 	id: string; // uuid
 	created_at: Date; // timestamp with time zone
-	lift?: Lift; // public.lift (assuming it's a string representation)
-	weight?: number; // double precision
-	cycle_id?: string; // uuid
+	lift: Lift; // public.lift (assuming it's a string representation)
+	weight: number; // double precision
+	cycle_id: string; // uuid
 	repetitions: number; // bigint
 	program_name: string; // text
-	workout_rating?: string; // text
+	workout_rating: string; // text
 }
 
 export enum Lift {

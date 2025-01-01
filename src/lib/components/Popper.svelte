@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { popperState, referenceState } from '$lib/stores/popper.svelte';
+	import { hidePopper, popperState, referenceState } from '$lib/stores/popper.svelte';
 	import { onMount } from 'svelte';
 
 	let { position = 'below' } = $props();
@@ -28,14 +28,15 @@
 		if (popperState.visible) {
 			if (isFirstClick) {
 				isFirstClick = false;
-			} else if (
-				popperElement &&
-				(event.target as HTMLElement) !== popperElement &&
-				!popperElement.contains(event.target as Node)
-			) {
-				popperState.visible = false;
-				referenceState.reference = undefined;
 			}
+			// TODO: fix click outside
+			// else if (
+			// 	popperElement &&
+			// 	(event.target as HTMLElement) !== popperElement &&
+			// 	!popperElement.contains(event.target as Node)
+			// ) {
+			// 	hidePopper();
+			// }
 		}
 	};
 
@@ -52,8 +53,7 @@
 		id="popper"
 		class="bg-secondary text-secondary w-full flex justify-center h-fit shadow-lg"
 	>
-		{#if popperState.component}
-			<svelte:component this={popperState.component} {...popperState.props}></svelte:component>
-		{/if}
+		<!-- svelte-ignore svelte_component_deprecated -->
+		<svelte:component this={popperState.component} {...popperState.props}></svelte:component>
 	</div>
 {/if}

@@ -34,8 +34,6 @@
 			if (allSetsDone && workoutResponse.data) {
 				updateCycle(cycle.id, column, true);
 			}
-
-			popperState.visible = false;
 		}
 	};
 

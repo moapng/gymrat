@@ -8,7 +8,7 @@
 	import Toast from '$lib/components/Toast.svelte';
 	import { insertNewCycle } from '$lib/api';
 	import { toastState } from '$lib/stores/toast.svelte';
-	import NewPR from '$lib/components/NewPR.svelte';
+	import PR from '$lib/components/PR.svelte';
 	import Popper from '$lib/components/Popper.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -42,7 +42,6 @@
 					nextTexasWeek = TexasWeek.deload;
 					break;
 			}
-			console.log(nextTexasWeek);
 
 			const response = await insertNewCycle(
 				cycleState.cycle?.cycle,
@@ -69,7 +68,7 @@
 	{#if process.env.NODE_ENV !== 'production' || userState.user}
 		<Lift {data} bind:RPE bind:repetitions />
 
-		<NewPR />
+		<PR />
 		<button class="btn btn-primary w-full" onclick={() => setNextCycle()}>nästa set</button>
 	{:else}
 		logga in bih

@@ -35,7 +35,6 @@
 	};
 
 	const togglePopper = (e: Event, lift: Lift) => {
-		console.log(popperState);
 		lift === Lift.mark ? (position = 'above') : (position = 'below');
 		if (!popperState.visible) {
 			liftOpen = lift;

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { insertNewCycle } from '$lib/api';
-	import { TexasWeek } from '$lib/interfaces';
+	import { TexasWeek, ToastType } from '$lib/interfaces';
 	import { popperState, showPopper, hidePopper } from '$lib/stores/popper.svelte';
 	import { toastState } from '$lib/stores/toast.svelte';
 	import { userState } from '$lib/stores/user.svelte';
-	import { cycleState, programState } from '$lib/stores/workout.svelte';
+	import { cycleState } from '$lib/stores/workout.svelte';
 	import NewPR from './NewPR.svelte';
 
 	const setNextCycle = async () => {
@@ -22,18 +22,12 @@
 					break;
 			}
 
-			const response = await insertNewCycle(
+			insertNewCycle(
 				cycleState.cycle?.cycle,
 				userState.user?.user_metadata.user_name,
-				programState.programName,
+				cycleState.cycle?.program_name,
 				nextTexasWeek
 			);
-			if (response.status === 201) {
-				toastState.text = 'yay ny cykel';
-				toastState.type = 'success';
-				toastState.visible = true;
-				cycleState.cycle = response.data;
-			}
 		}
 	};
 

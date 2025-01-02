@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { insertPR, insertWorkout, updateCycle } from '$lib/api';
-	import { popperState } from '$lib/stores/popper.svelte';
-	import { toastState } from '$lib/stores/toast.svelte';
-	import { cycleState, programState } from '$lib/stores/workout.svelte';
+	import { insertWorkout, updateCycle } from '$lib/api';
+	import { cycleState } from '$lib/stores/workout.svelte';
 
 	const { lift, weight, repetitions } = $props();
 
@@ -11,27 +9,18 @@
 	const handleClick = async (rating: string) => {
 		const cycle = cycleState.cycle;
 
-		if (cycle) {
+		if (cycleState && cycle) {
 			const workoutResponse = await insertWorkout(
 				lift,
 				weight,
 				repetitions,
 				rating,
-				programState.programName,
+				cycleState.cycle.program_name,
 				cycle.id
 			);
-			if (workoutResponse.status === 201) {
-				toastState.text = 'workout added';
-				toastState.type = 'success';
-				toastState.visible = true;
-			} else {
-				toastState.text = 'error';
-				toastState.type = 'error';
-				toastState.visible = true;
-			}
 
 			const column = lift + '_done';
-			if (allSetsDone && workoutResponse.data) {
+			if (allSetsDone && workoutResponse?.data) {
 				updateCycle(cycle.id, column, true);
 			}
 		}

@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
-import { get1RM, getLatestCycle, getUserProgramName } from '$lib/api';
+import { get1RM, getLatestCycle } from '$lib/api';
 import { Lift } from '$lib/interfaces';
 import { userState } from '$lib/stores/user.svelte';
-import { cycleState, programState } from '$lib/stores/workout.svelte';
+import { cycleState } from '$lib/stores/workout.svelte';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
@@ -13,9 +13,10 @@ export const load: PageLoad = async () => {
 			sessionObject = JSON.parse(session);
 		}
 
-		const userName = sessionObject?.user.user_metadata.user_name ?? 'moapng';
+		const userName = sessionObject?.user.user_metadata.user_name ?? import.meta.env.VITE_MY_USER;
+		;
+		console.log(userName);
 		userState.user = sessionObject?.user;
-		programState.programName = await getUserProgramName(userName)
 		cycleState.cycle = await getLatestCycle(userName);
 
 		const böj = await get1RM(Lift.böj)

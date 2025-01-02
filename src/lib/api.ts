@@ -1,8 +1,23 @@
 import { supabase } from './supabase';
-import type { Lift, supabaseCycle, supabaseWorkout, TexasWeek } from './interfaces';
+import { ToastType, type Lift, type supabaseCycle, type supabasePR, type supabaseWorkout, type TexasWeek } from './interfaces';
+import { toastState } from './stores/toast.svelte';
 
-export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number> => {
-	const { data: PR, error } = await supabase
+const handleError = (error: Error) => {
+	console.error(error)
+	toastState.text = error.message;
+	toastState.type = ToastType.error;
+	toastState.visible = true;
+	return null;
+}
+
+const handleSuccess = (message: string) => {
+	toastState.text = message;
+	toastState.type = ToastType.success;
+	toastState.visible = true;
+}
+
+export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number | null> => {
+	const { data: PR, error, statusText } = await supabase
 		.from('PR')
 		.select('weight')
 		.eq('lift', lift)
@@ -10,31 +25,16 @@ export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number> =
 		.limit(1);
 
 	if (error) {
-		console.error('Error fetching sets:', error);
-		return 0;
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
 	}
 
 	return PR && PR.length > 0 ? PR[0].weight : 0;
 };
 
-export const getUserProgramName = async (currentUser: string): Promise<string> => {
-
-	const { data, error } = await supabase
-		.from('user')
-		.select('chosen_program_name')
-		.eq('user_name', currentUser)
-		.limit(1)
-		.single();
-
-	if (error) {
-		console.error('Error fetching formula:', error);
-		return '';
-	}
-	return data ? data.chosen_program_name : '';
-}
-
 export const getUserCycleId = async (currentUser: string) => {
-	const { data, error } = await supabase
+	const { data, error, statusText } = await supabase
 		.from('user')
 		.select('cycle_id')
 		.eq('user_name', currentUser)
@@ -42,34 +42,37 @@ export const getUserCycleId = async (currentUser: string) => {
 		.single()
 
 	if (error) {
-		console.error('Error fetching user:', error);
-		return null;
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
 	}
 	return data ? data.cycle_id : null;
 }
 
-export const getCycle = async (cycleId: string) => {
-	const { data: cycle, error } = await supabase
+export const getCycle = async (cycleId: string): Promise<supabaseCycle | null> => {
+	const { data: cycle, error, statusText } = await supabase
 		.from('cycle')
 		.select('*')
 		.eq('id', cycleId)
 		.limit(1)
 		.single()
+
 	if (error) {
-		console.error('Error fetching user:', error);
-		return null;
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
 	}
 
 	return cycle ? cycle : null;
 }
 
-export const insertNewCycle = async (latestCycle: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseCycle; status: number }> => {
-	const { data, status, error } = await supabase
+export const insertNewCycle = async (latestCycle: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseCycle; status: number } | null> => {
+	const { data, status, error, statusText } = await supabase
 		.from('cycle')
 		.insert([
 			{
 				cycle: latestCycle + 1,
-				'user_name': userName ?? 'moapng',
+				'user_name': userName ?? import.meta.env.MY_USER,
 				'program_name': programName,
 				'texas_week': texasWeek
 			},
@@ -78,24 +81,32 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 		.limit(1)
 		.single();
 
-	if (error) console.error(error)
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
+	}
 	return { data, status };
 }
 
-export const updateCycle = async (cycleId: string, column: string, value: any) => {
-	const { data, error } = await supabase
+export const updateCycle = async (cycleId: string, column: string, value: any): Promise<supabaseCycle[] | null> => {
+	const { data, error, statusText } = await supabase
 		.from('cycle')
 		.update({ [column]: value })
 		.eq('id', cycleId)
 		.select();
 
-	if (error) return error;
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
+	}
 	return data;
 }
 
-export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number }> => {
+export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
 
-	const { data, status, error } = await supabase
+	const { data, status, error, statusText } = await supabase
 		.from('workout')
 		.insert([
 			{
@@ -111,12 +122,16 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 		.limit(1)
 		.single();
 
-	if (error) console.error(error);
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
+	};
 	return { data, status };
 }
 
-export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string) => {
-	const { data, status, error } = await supabase
+export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string): Promise<{ data: supabasePR[]; status: number } | null> => {
+	const { data, status, error, statusText } = await supabase
 		.from('PR')
 		.insert([
 			{
@@ -128,13 +143,17 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 		])
 		.select()
 
-	if (error) return { data: null, status: 500 };
-	return { data, status };
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
+	}
+	return data ? { data, status } : null;
 }
 
-export const getLatestCycle = async (currentUser: string) => {
+export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle | null> => {
 
-	const { data: cycle, error } = await supabase
+	const { data: cycle, error, statusText } = await supabase
 		.from('cycle')
 		.select('*')
 		.eq('user_name', currentUser)
@@ -142,7 +161,11 @@ export const getLatestCycle = async (currentUser: string) => {
 		.limit(1)
 		.single();
 
-	if (error) return error;
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(statusText);
+	}
 	return cycle ? cycle : null;
 
 }

@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import Lift from '$lib/components/Lift.svelte';
 	import { TexasRepetitions, TexasWeek } from '$lib/interfaces';
-	import { cycleState, programState } from '$lib/stores/workout.svelte';
+	import { cycleState } from '$lib/stores/workout.svelte';
 	import Toast from '$lib/components/Toast.svelte';
 	import Popper from '$lib/components/Popper.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -27,21 +27,22 @@
 	});
 </script>
 
-<header class="flex w-full justify-between">
-	<p>{programState.programName}</p>
-	<p>{cycleState.cycle.cycle}</p>
-	<p>{cycleState.cycle.texas_week}</p>
-</header>
-<section class="flex flex-col w-full items-center bottom">
-	{#if process.env.NODE_ENV !== 'production' || userState.user}
+{#if process.env.NODE_ENV !== 'production' || userState.user}
+	<header class="flex w-full justify-between">
+		<p>{cycleState.cycle.program_name}</p>
+		<p>{cycleState.cycle.cycle}</p>
+		<p>{cycleState.cycle.texas_week}</p>
+	</header>
+	<section class="flex flex-col w-full items-center bottom">
 		<Lift {data} bind:RPE bind:repetitions />
 
 		<Footer />
-	{:else}
-		logga in bih
+	</section>
 
-		<button class="btn btn-secondary" onclick={() => login()}> logga in </button>
-	{/if}
-</section>
-<Toast />
-<Popper />
+	<Toast />
+	<Popper />
+{:else}
+	logga in bih
+
+	<button class="btn btn-secondary" onclick={() => login()}> logga in </button>
+{/if}

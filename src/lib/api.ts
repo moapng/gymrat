@@ -89,24 +89,26 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 	return { data, status };
 }
 
-export const updateCycle = async (cycleId: string, column: string, value: any): Promise<supabaseCycle[] | null> => {
-	const { data, error, statusText } = await supabase
+export const updateCycle = async (cycleId: string, column: string, value: any): Promise<supabaseCycle | null> => {
+	const { data: cycle, error } = await supabase
 		.from('cycle')
 		.update({ [column]: value })
 		.eq('id', cycleId)
-		.select();
+		.select()
+		.limit(1)
+		.single();
 
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(statusText);
+		handleSuccess(`nästa cykel igång ${cycle.cycle}`);
 	}
-	return data;
+	return cycle ? cycle : null;
 }
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
 
-	const { data, status, error, statusText } = await supabase
+	const { data, status, error } = await supabase
 		.from('workout')
 		.insert([
 			{
@@ -125,13 +127,13 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(statusText);
+		handleSuccess('lagt till pass');
 	};
 	return { data, status };
 }
 
-export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string): Promise<{ data: supabasePR[]; status: number } | null> => {
-	const { data, status, error, statusText } = await supabase
+export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string): Promise<{ data: supabasePR; status: number } | null> => {
+	const { data, status, error } = await supabase
 		.from('PR')
 		.insert([
 			{
@@ -142,11 +144,13 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 			},
 		])
 		.select()
+		.limit(1)
+		.single();
 
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(statusText);
+		handleSuccess(`nytt PB wihoo ${data.weight}kg ${data.repetitions}reps`);
 	}
 	return data ? { data, status } : null;
 }
@@ -164,7 +168,7 @@ export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(statusText);
+		handleSuccess(`senaste cykeln: ${cycle.cycle}`);
 	}
 	return cycle ? cycle : null;
 

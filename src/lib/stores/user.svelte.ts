@@ -1,15 +1,19 @@
 import { supabase } from '$lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
-export const userState: { user: User | null } = $state({ user: null });
+export const userState: { user: User | undefined } = $state({ user: undefined });
 
-// supabase.auth.onAuthStateChange((event, session) => {
-// 	if (session) {
+supabase.auth.getSession().then(({ data }) => {
+	userState.user = data.session?.user;
+});
 
-// 		userState.user = session.user;
-// 		supabase.auth.setSession({ access_token: session.access_token, refresh_token: session.refresh_token });
-// 	}
-// });
+supabase.auth.onAuthStateChange((event, session) => {
+	if (event == 'SIGNED_IN' && session) {
+		userState.user = session.user;
+	} else if (event == 'SIGNED_OUT') {
+		userState.user = undefined;
+	}
+});
 
 export const login = async () => {
 	const { error } = await supabase.auth.signInWithOAuth({
@@ -28,5 +32,5 @@ export const login = async () => {
 
 export const logout = async () => {
 	await supabase.auth.signOut();
-	userState.user = null;
+	userState.user = undefined;
 };

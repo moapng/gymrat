@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import Lift from '$lib/components/Lift.svelte';
-	import { TexasRepetitions, TexasWeek } from '$lib/interfaces';
+	import { TexasRepetitions } from '$lib/interfaces';
 	import { cycleState } from '$lib/stores/workout.svelte';
 	import Toast from '$lib/components/Toast.svelte';
 	import Popper from '$lib/components/Popper.svelte';

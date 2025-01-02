@@ -15,14 +15,15 @@ export const load: PageLoad = async () => {
 
 		const userName = sessionObject?.user.user_metadata.user_name ?? import.meta.env.VITE_MY_USER;
 		;
-		console.log(userName);
 		userState.user = sessionObject?.user;
-		cycleState.cycle = await getLatestCycle(userName);
+		if (userState.user) {
+			cycleState.cycle = await getLatestCycle(userName);
 
-		const böj = await get1RM(Lift.böj)
-		const bänk = await get1RM(Lift.bänk);
-		const mark = await get1RM(Lift.mark);
+			const böj = await get1RM(Lift.böj)
+			const bänk = await get1RM(Lift.bänk);
+			const mark = await get1RM(Lift.mark);
 
-		return { böj, bänk, mark }
+			return { böj, bänk, mark }
+		}
 	}
 };

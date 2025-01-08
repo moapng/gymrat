@@ -8,6 +8,7 @@
 	import Toast from '$lib/components/Toast.svelte';
 	import Popper from '$lib/components/Popper.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { getTodaysWorkouts } from '$lib/api';
 
 	let { data }: { data: PageData } = $props();
 
@@ -24,6 +25,8 @@
 
 	$effect(() => {
 		localStorage.setItem('RPE', RPE.toString());
+
+		getTodaysWorkouts();
 	});
 </script>
 

@@ -106,6 +106,25 @@ export const updateCycle = async (cycleId: string, column: string, value: any): 
 	return cycle ? cycle : null;
 }
 
+export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle | null> => {
+
+	const { data: cycle, error } = await supabase
+		.from('cycle')
+		.select('*')
+		.eq('user_name', currentUser)
+		.order('started_at', { ascending: false })
+		.limit(1)
+		.single();
+
+	if (error) {
+		handleError(error)
+	} else {
+		handleSuccess(`senaste cykeln: ${cycle.cycle}`);
+	}
+	return cycle ? cycle : null;
+
+}
+
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
 
 	const { data, status, error } = await supabase
@@ -155,21 +174,33 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 	return data ? { data, status } : null;
 }
 
-export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle | null> => {
+export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
 
-	const { data: cycle, error, statusText } = await supabase
-		.from('cycle')
+	const today = new Date();
+	const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+	const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+
+	const { data, error } = await supabase
+		.from('workout')
 		.select('*')
-		.eq('user_name', currentUser)
-		.order('started_at', { ascending: false })
-		.limit(1)
-		.single();
+		.gte('created_at', startOfDay)
+		.lt('created_at', endOfDay);
 
 	if (error) {
 		handleError(error)
-	} else {
-		handleSuccess(`senaste cykeln: ${cycle.cycle}`);
 	}
-	return cycle ? cycle : null;
+	return data as supabaseWorkout[];
+}
+
+export const latestCompletedWorkoutForEachLift = async (): Promise<supabaseWorkout[]> => {
+	const { data, error } = await supabase
+		.from('latest_workouts_view')
+		.select('*');
+
+	if (error) {
+		handleError(error)
+	}
+	console.log(data)
+	return data as supabaseWorkout[];
 
 }

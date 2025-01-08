@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Lift, TexasFactor, TexasRepetitions, type OneRepMax } from '$lib/interfaces';
+	import { getTodaysWorkouts } from '$lib/api';
+	import {
+		Lift,
+		TexasFactor,
+		TexasRepetitions,
+		type OneRepMax,
+		type supabaseWorkout
+	} from '$lib/interfaces';
 	import { calculateRPE, calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
 	import { hidePopper, popperState, showPopper } from '$lib/stores/popper.svelte';
 	import { cycleState } from '$lib/stores/workout.svelte';
@@ -9,6 +16,7 @@
 	let isOpen = $state({ [Lift.böj]: true, [Lift.bänk]: true, [Lift.mark]: true });
 	let position = $state('above');
 	let liftOpen: Lift = $state(Lift.böj);
+	let todaysCompletedWorkouts: supabaseWorkout[] | null = $state(null);
 
 	let oneRepMax: OneRepMax = $state({
 		[Lift.böj]: data.böj as number,
@@ -65,6 +73,15 @@
 		{#if isOpen[lift]}
 			<dd class="m-4 flex justify-between">
 				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[cycleState.cycle.texas_week]}
+				<div>
+					{#await getTodaysWorkouts() then workouts}
+						{#each workouts as workout}
+							{#if workout.lift === lift}
+								⭐
+							{/if}
+						{/each}
+					{/await}
+				</div>
 				<button class="btn btn-primary" onclick={(e) => togglePopper(e, lift)}>
 					<i class="material-symbols-outlined"> task_alt </i>
 				</button>

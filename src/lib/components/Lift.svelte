@@ -56,7 +56,7 @@
 </script>
 
 {#snippet liftSnippet(lift: Lift)}
-	<dl class="bg-secondary text-secondary w-full align-center">
+	<dl class="text-secondary w-full align-center">
 		<button onclick={() => toggleAccordion(lift)} class="btn btn-primary w-full">
 			<dt>{lift} {cycleState.cycle?.[`${lift}_done`]}</dt>
 		</button>

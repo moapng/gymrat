@@ -39,14 +39,14 @@
 	};
 </script>
 
-<div class="grid grid-cols-2">
-	<input type="text" inputmode="numeric" bind:value={weight} />
-	<input type="text" inputmode="numeric" bind:value={repetitions} />
+<div class="grid grid-cols-2 px-3">
+	<input class="w-4" type="text" inputmode="numeric" bind:value={weight} />
+	<input class="w-4" type="text" inputmode="numeric" bind:value={repetitions} />
 
 	<select bind:value={lift}>
-		<option value={Lift.böj}></option>
-		<option value={Lift.bänk}></option>
-		<option value={Lift.mark}></option>
+		<option value={Lift.böj}>{Lift.böj}</option>
+		<option value={Lift.bänk}>{Lift.bänk}</option>
+		<option value={Lift.mark}>{Lift.mark}</option>
 	</select>
-	<button class="btn btn-primary" onclick={() => handleClick()}>nytt PB wihoo</button>
+	<button class="btn btn-primary" onclick={() => handleClick()}>nytt PB</button>
 </div>

@@ -7,9 +7,7 @@
 	const setPosition = () => {
 		if (referenceState.reference && popperElement) {
 			const referenceRect = referenceState.reference.getBoundingClientRect();
-			const popperRect = popperElement.getBoundingClientRect();
 			popperElement.style.position = 'absolute';
-			console.log('popperRect', popperRect, 'referenceRect', referenceRect);
 			if (popperState.position === 'above') {
 				let bottom = window.innerHeight - referenceRect.top;
 				popperElement.style.bottom = `${bottom}px`;
@@ -49,9 +47,15 @@
 	<div
 		bind:this={popperElement}
 		id="popper"
-		class="bg-secondary text-secondary w-full flex justify-center h-fit shadow-lg"
+		class="bg-glass text-secondary py-4 w-full flex justify-center h-fit shadow-lg"
 	>
 		<!-- svelte-ignore svelte_component_deprecated -->
 		<svelte:component this={popperState.component} {...popperState.props}></svelte:component>
+		<button
+			class="absolute top-0 right-0 h-2 w-2 p-0 text-secondary"
+			onclick={() => (popperState.visible = false)}
+		>
+			<i class="material-symbols-outlined text-medium"> cancel </i>
+		</button>
 	</div>
 {/if}

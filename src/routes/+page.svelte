@@ -36,7 +36,7 @@
 		<p>{data.cycle?.cycle}</p>
 		<p>{data.cycle?.texas_week}</p>
 	</header>
-	<section class="flex flex-col w-full items-center bottom">
+	<section class="flex flex-col w-full items-center fixed bottom-0">
 		<Lift {data} bind:RPE bind:repetitions />
 
 		<Footer />

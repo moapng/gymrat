@@ -20,10 +20,10 @@
 				cycle.id
 			);
 
-			const column = lift + '_done';
-			if (allSetsDone && workoutResponse?.data) {
-				updateCycle(cycle.id, column, true);
-			}
+			// const column = lift + '_done';
+			// if (allSetsDone && workoutResponse?.data) {
+			// 	updateCycle(cycle.id, column, true);
+			// }
 		}
 		setTimeout(() => {
 			invalidateAll();
@@ -35,14 +35,9 @@
 
 <div class="grid grid-cols-3">
 	{#each ratings as rating}
-		<button class="btn" onclick={() => handleClick(rating)}>{rating}</button>
+		<button class="btn btn-secondary text-large" onclick={() => handleClick(rating)}>
+			{rating}
+		</button>
 	{/each}
-	<input type="checkbox" bind:checked={allSetsDone} />
+	<!-- <input type="checkbox" bind:checked={allSetsDone} /> -->
 </div>
-
-<style>
-	button {
-		font-size: 1rem;
-		background-color: violet;
-	}
-</style>

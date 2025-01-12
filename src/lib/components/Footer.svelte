@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { insertNewCycle } from '$lib/api';
-	import { TexasWeek, ToastType } from '$lib/interfaces';
+	import { TexasWeek } from '$lib/interfaces';
 	import { popperState, showPopper, hidePopper } from '$lib/stores/popper.svelte';
-	import { toastState } from '$lib/stores/toast.svelte';
 	import { userState } from '$lib/stores/user.svelte';
 	import { cycleState } from '$lib/stores/workout.svelte';
 	import NewPR from './NewPR.svelte';
@@ -28,6 +28,10 @@
 				cycleState.cycle?.program_name,
 				nextTexasWeek
 			);
+
+			setTimeout(() => {
+				invalidateAll();
+			}, 500);
 		}
 	};
 
@@ -41,7 +45,7 @@
 </script>
 
 <div class="flex">
-	<button class="btn btn-primary" onclick={() => setNextCycle()}>nästa set</button>
+	<button class="btn btn-primary" onclick={() => setNextCycle()}>ny cykel</button>
 
 	<button class="btn btn-primary" onclick={(e) => togglePopper(e)}>nytt PB</button>
 </div>

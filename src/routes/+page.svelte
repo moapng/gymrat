@@ -32,9 +32,9 @@
 
 {#if process.env.NODE_ENV !== 'production' || userState.user}
 	<header class="flex w-full justify-between">
-		<p>{cycleState.cycle.program_name}</p>
-		<p>{cycleState.cycle.cycle}</p>
-		<p>{cycleState.cycle.texas_week}</p>
+		<p>{data.cycle?.program_name}</p>
+		<p>{data.cycle?.cycle}</p>
+		<p>{data.cycle?.texas_week}</p>
 	</header>
 	<section class="flex flex-col w-full items-center bottom">
 		<Lift {data} bind:RPE bind:repetitions />

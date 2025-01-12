@@ -37,6 +37,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@js-temporal/polyfill": "^0.4.4",
 		"@supabase/auth-helpers-sveltekit": "^0.13.0",
 		"@supabase/supabase-js": "^2.47.10",
 		"@sveltejs/adapter-node": "^5.1.1",

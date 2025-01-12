@@ -1,3 +1,5 @@
+import type { Temporal } from '@js-temporal/polyfill';
+
 // colors
 export const hot_pink_rgb = 'rgb(244, 81, 211)';
 export const dark_purple_rgb = 'rgb(65, 0, 119)';
@@ -5,44 +7,44 @@ export const kuromi_purple_rgb = 'rgb(173, 82, 248)';
 export const very_light_purple_rgb = 'rgb(194, 152, 230)';
 
 export interface supabasePR {
-	id: number; // bigint
-	achieved_at: Date; // date
-	lift: string; // public.lift (assuming it's a string representation)
-	weight: number; // double precision
-	workout_id?: string; // uuid
-	repetitions: number; // bigint
+	id: number;
+	achieved_at: Temporal.PlainDateTime;
+	lift: string;
+	weight: number;
+	workout_id?: string;
+	repetitions: number;
 }
 export interface supabaseCycle {
-	id: string; // uuid
-	started_at: Date; // timestamp with time zone
-	cycle: number; // bigint
-	bänk_done: boolean; // boolean
-	böj_done: boolean; // boolean
-	mark_done: boolean; // boolean
-	user_name: string; // text
-	program_name: string; // text
+	id: string;
+	started_at: Temporal.PlainDateTime;
+	cycle: number;
+	bänk_done: boolean;
+	böj_done: boolean;
+	mark_done: boolean;
+	user_name: string;
+	program_name: string;
 	texas_week: TexasWeek;
 }
 
 export interface supabaseProgram {
-	created_at: Date; // timestamp with time zone
-	name: string; // text
-	formula: object; // json
+	created_at: Temporal.PlainDateTime;
+	name: string;
+	formula: object;
 }
 export interface supabaseUser {
-	user_name: string; // text
-	chosen_program_name: string; // text
-	current_texas_week: string; // public.texas_week (assuming it's a string representation)
+	user_name: string;
+	chosen_program_name: string;
+	current_texas_week: string;
 }
 export interface supabaseWorkout {
-	id: string; // uuid
-	created_at: Date; // timestamp with time zone
-	lift: Lift; // public.lift (assuming it's a string representation)
-	weight: number; // double precision
-	cycle_id: string; // uuid
-	repetitions: number; // bigint
-	program_name: string; // text
-	workout_rating: string; // text
+	id: string;
+	created_at: Temporal.PlainDateTime;
+	lift: Lift;
+	weight: number;
+	cycle_id: string;
+	repetitions: number;
+	program_name: string;
+	workout_rating: string;
 }
 
 export enum Lift {

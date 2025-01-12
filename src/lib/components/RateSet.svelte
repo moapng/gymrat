@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { insertWorkout, updateCycle } from '$lib/api';
 	import { cycleState } from '$lib/stores/workout.svelte';
 
@@ -24,6 +25,9 @@
 				updateCycle(cycle.id, column, true);
 			}
 		}
+		setTimeout(() => {
+			invalidateAll();
+		}, 500);
 	};
 
 	const ratings = ['🔥', '😌', '😐', '😞', '💩'];

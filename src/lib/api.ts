@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { ToastType, type Lift, type supabaseCycle, type supabasePR, type supabaseWorkout, type TexasWeek } from './interfaces';
 import { toastState } from './stores/toast.svelte';
+import { Temporal } from '@js-temporal/polyfill';
 
 const handleError = (error: Error) => {
 	console.error(error)
@@ -67,7 +68,7 @@ export const getCycle = async (cycleId: string): Promise<supabaseCycle | null> =
 }
 
 export const insertNewCycle = async (latestCycle: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseCycle; status: number } | null> => {
-	const { data, status, error, statusText } = await supabase
+	const { data, status, error } = await supabase
 		.from('cycle')
 		.insert([
 			{
@@ -84,7 +85,7 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(statusText);
+		handleSuccess('ny cykel!');
 	}
 	return { data, status };
 }
@@ -101,12 +102,12 @@ export const updateCycle = async (cycleId: string, column: string, value: any): 
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess(`nästa cykel igång ${cycle.cycle}`);
+		handleSuccess(`uppdaterat cykeln`);
 	}
 	return cycle ? cycle : null;
 }
 
-export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle | null> => {
+export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle> => {
 
 	const { data: cycle, error } = await supabase
 		.from('cycle')
@@ -118,20 +119,18 @@ export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle
 
 	if (error) {
 		handleError(error)
-	} else {
-		handleSuccess(`senaste cykeln: ${cycle.cycle}`);
 	}
 	return cycle ? cycle : null;
 
 }
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
-
 	const { data, status, error } = await supabase
 		.from('workout')
 		.insert([
 			{
 				lift: lift,
+				created_at: Temporal.Now.zonedDateTimeISO().toPlainDateTime(),
 				weight: weight,
 				repetitions: repetitions,
 				workout_rating: workoutRating,
@@ -176,9 +175,13 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 
 export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
 
-	const today = new Date();
-	const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-	const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+	const now = Temporal.Now.zonedDateTimeISO();
+	const startOfDay = now.with({ hour: 0, minute: 0, second: 0, }).toPlainDateTime();
+	const endOfDay = now.with({
+		hour: 23,
+		minute: 59,
+		second: 59,
+	}).toPlainDateTime();
 
 	const { data, error } = await supabase
 		.from('workout')

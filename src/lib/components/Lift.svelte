@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getTodaysWorkouts } from '$lib/api';
 	import {
 		Lift,
 		TexasFactor,
@@ -16,7 +15,6 @@
 	let isOpen = $state({ [Lift.böj]: true, [Lift.bänk]: true, [Lift.mark]: true });
 	let position = $state('above');
 	let liftOpen: Lift = $state(Lift.böj);
-	let todaysCompletedWorkouts: supabaseWorkout[] | null = $state(null);
 
 	let oneRepMax: OneRepMax = $state({
 		[Lift.böj]: data.böj as number,
@@ -55,14 +53,6 @@
 			hidePopper();
 		}
 	};
-
-	$effect(() => {
-		calculatedWithRPE = Object.entries(calculatedWithTexasMethod)
-			.map(([key, value]) => {
-				return { [key]: calculateRPE(value, repetitions, RPE) };
-			})
-			.reduce((acc, cur) => ({ ...acc, ...cur }), {} as OneRepMax);
-	});
 </script>
 
 {#snippet liftSnippet(lift: Lift)}
@@ -74,13 +64,11 @@
 			<dd class="m-4 flex justify-between">
 				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[cycleState.cycle.texas_week]}
 				<div>
-					{#await getTodaysWorkouts() then workouts}
-						{#each workouts as workout}
-							{#if workout.lift === lift}
-								⭐
-							{/if}
-						{/each}
-					{/await}
+					{#each data.todaysWorkouts as workout}
+						{#if workout.lift === lift}
+							⭐
+						{/if}
+					{/each}
 				</div>
 				<button class="btn btn-primary" onclick={(e) => togglePopper(e, lift)}>
 					<i class="material-symbols-outlined"> task_alt </i>

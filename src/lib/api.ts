@@ -145,7 +145,7 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 	if (error) {
 		handleError(error)
 	} else {
-		handleSuccess('lagt till pass');
+		handleSuccess('lagt till set');
 	};
 	return { data, status };
 }

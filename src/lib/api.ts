@@ -207,3 +207,39 @@ export const latestCompletedWorkoutForEachLift = async (): Promise<supabaseWorko
 	return data as supabaseWorkout[];
 
 }
+
+export const getBöjOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
+	const { data, error } = await supabase
+		.from('1RM_böj_view')
+		.select('*')
+		.order('achieved_at', { ascending: true });
+
+	if (error) {
+		handleError(error)
+	}
+	return data as supabaseWorkout[];
+}
+
+export const getBänkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
+	const { data, error } = await supabase
+		.from('1RM_bänk_view')
+		.select('*')
+		.order('achieved_at', { ascending: true });
+
+	if (error) {
+		handleError(error)
+	}
+	return data as supabaseWorkout[];
+}
+
+export const getMarkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
+	const { data, error } = await supabase
+		.from('1RM_mark_view')
+		.select('*')
+		.order('achieved_at', { ascending: true });
+
+	if (error) {
+		handleError(error)
+	}
+	return data as supabaseWorkout[];
+}

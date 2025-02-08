@@ -9,6 +9,7 @@
 	import Popper from '$lib/components/Popper.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { getTodaysWorkouts } from '$lib/api';
+	import OneRM from '$lib/components/OneRM.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -37,6 +38,7 @@
 		<p>{data.cycle?.texas_week}</p>
 	</header>
 	<section class="flex flex-col w-full items-center fixed bottom-0">
+		<OneRM />
 		<Lift {data} bind:RPE bind:repetitions />
 
 		<Footer />

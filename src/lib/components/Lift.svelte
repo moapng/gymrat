@@ -70,8 +70,12 @@
 						{/if}
 					{/each}
 				</div>
-				<button class="btn btn-primary" onclick={(e) => togglePopper(e, lift)}>
-					<i class="material-symbols-outlined"> task_alt </i>
+				<button
+					class="btn btn-primary"
+					onclick={(e) => togglePopper(e, lift)}
+					aria-label="Toggle Popper"
+				>
+					<i class="fa-solid fa-check"></i>
 				</button>
 			</dd>
 		{/if}

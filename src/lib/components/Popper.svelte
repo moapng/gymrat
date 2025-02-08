@@ -44,18 +44,19 @@
 <svelte:window onclick={(e) => handleClickOutside(e)} />
 
 {#if popperState.visible}
-	<div
+	<dialog
 		bind:this={popperElement}
 		id="popper"
-		class="bg-glass text-secondary py-4 w-full flex justify-center h-fit shadow-lg"
+		class="bg-glass text-secondary w-full flex justify-center h-fit shadow-lg b-0 p-0 pt-6 pb-4"
 	>
 		<!-- svelte-ignore svelte_component_deprecated -->
 		<svelte:component this={popperState.component} {...popperState.props}></svelte:component>
 		<button
 			class="absolute top-0 right-0 h-2 w-2 p-0 text-secondary"
 			onclick={() => (popperState.visible = false)}
+			aria-label="Close popper"
 		>
-			<i class="material-symbols-outlined text-medium"> cancel </i>
+			<i class="fa-solid fa-ban"></i>
 		</button>
-	</div>
+	</dialog>
 {/if}

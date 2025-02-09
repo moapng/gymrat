@@ -51,13 +51,13 @@
 </script>
 
 <div class="grid grid-cols-2 px-3">
-	<div class="flex flex-col">
+	<div class="flex flex-col w-8">
 		<select bind:value={nextTexasWeek}>
 			<option value={TexasWeek.volume}>{TexasWeek.volume}</option>
 			<option value={TexasWeek.intensity}>{TexasWeek.intensity}</option>
 			<option value={TexasWeek.deload}>{TexasWeek.deload}</option>
 		</select>
-		<button class="btn btn-primary" onclick={() => setNextCycle()}>xxx</button>
+		<button class="btn btn-primary" onclick={() => setNextCycle()}>{nextTexasWeek} nästa</button>
 	</div>
-	<button class="btn btn-primary" onclick={() => autoSetNextCycle()}>auto nästa</button>
+	<button class="btn btn-primary w-8" onclick={() => autoSetNextCycle()}>auto nästa</button>
 </div>

@@ -203,7 +203,6 @@ export const latestCompletedWorkoutForEachLift = async (): Promise<supabaseWorko
 	if (error) {
 		handleError(error)
 	}
-	console.log(data)
 	return data as supabaseWorkout[];
 
 }

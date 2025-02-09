@@ -1,12 +1,6 @@
 <script lang="ts">
-	import {
-		Lift,
-		TexasFactor,
-		TexasRepetitions,
-		type OneRepMax,
-		type supabaseWorkout
-	} from '$lib/interfaces';
-	import { calculateRPE, calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
+	import { Lift, TexasFactor, TexasRepetitions, type OneRepMax } from '$lib/interfaces';
+	import { calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
 	import { hidePopper, popperState, showPopper } from '$lib/stores/popper.svelte';
 	import { cycleState } from '$lib/stores/workout.svelte';
 	import RateSet from './RateSet.svelte';

@@ -15,10 +15,6 @@
 		bänkOneRepMaxes = await getBänkOneRepMaxes();
 		markOneRepMaxes = await getMarkOneRepMaxes();
 
-		console.log('böj:', böjOneRepMaxes);
-		console.log('bänk:', bänkOneRepMaxes);
-		console.log('mark:', markOneRepMaxes);
-
 		if (chart) {
 			chart.dispose();
 		}
@@ -99,4 +95,4 @@
 
 <h1>1RM</h1>
 
-<div id="chart" style="width: 100%; height: 400px;"></div>
+<div id="chart" class="w-full h-40"></div>

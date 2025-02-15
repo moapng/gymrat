@@ -1,5 +1,5 @@
 
-export const calculateTexasMethod = (oneRM: number, factor: number) => oneRM * 0.87 * factor;
+export const calculateTexasMethod = (oneRM: number, factor: number) => oneRM * factor;
 export const calculateRPE = (oneRM: number, reps: number, rpe: number) =>
 	oneRM * (1 - ((reps - 1) * 0.03) + ((10 - rpe) * 0.025));
 

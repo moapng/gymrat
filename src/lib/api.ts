@@ -126,7 +126,7 @@ export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
 	const { data, status, error } = await supabase
-		.from('workout')
+		.from('workouts')
 		.insert([
 			{
 				lift: lift,
@@ -184,7 +184,7 @@ export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
 	}).toPlainDateTime();
 
 	const { data, error } = await supabase
-		.from('workout')
+		.from('workouts')
 		.select('*')
 		.gte('created_at', startOfDay)
 		.lt('created_at', endOfDay);

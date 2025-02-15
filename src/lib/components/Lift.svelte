@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { latestCompletedWorkoutForEachLift } from '$lib/api';
 	import { Lift, TexasFactor, TexasRepetitions, type OneRepMax } from '$lib/interfaces';
 	import { calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
 	import { hidePopper, popperState, showPopper } from '$lib/stores/popper.svelte';
@@ -47,12 +48,20 @@
 			hidePopper();
 		}
 	};
+
+	const checkWhenLiftWasLatestCompleted = async (lift: Lift) => {
+		const latestCompleted = await latestCompletedWorkoutForEachLift();
+		const relevantLift = latestCompleted.find((workout) => workout.lift === lift);
+		return relevantLift?.created_at || 'ingen data';
+	};
+
+	// hämta alla workouts för CYCLE ID, om jag har en av varje, tillåt cycle++, annars dubbelkolla?
 </script>
 
 {#snippet liftSnippet(lift: Lift)}
 	<dl class="text-secondary w-full align-center">
 		<button onclick={() => toggleAccordion(lift)} class="btn btn-primary w-full">
-			<dt>{lift} {cycleState.cycle?.[`${lift}_done`]}</dt>
+			<dt>{lift} {cycleState.cycle?.[`${lift}_count`]}</dt>
 		</button>
 		{#if isOpen[lift]}
 			<dd class="m-4 flex justify-between">

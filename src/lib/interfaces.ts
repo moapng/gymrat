@@ -18,9 +18,9 @@ export interface supabaseCycle {
 	id: string;
 	started_at: Temporal.PlainDateTime;
 	cycle: number;
-	bänk_done: boolean;
-	böj_done: boolean;
-	mark_done: boolean;
+	bänk_count: boolean;
+	böj_count: boolean;
+	mark_count: boolean;
 	user_name: string;
 	program_name: string;
 	texas_week: TexasWeek;

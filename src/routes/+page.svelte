@@ -31,7 +31,7 @@
 	});
 </script>
 
-{#if process.env.NODE_ENV !== 'production' || userState.user}
+{#if userState.user}
 	<header class="flex w-full justify-between">
 		<p>{data.cycle?.program_name}</p>
 		<p>{data.cycle?.cycle}</p>

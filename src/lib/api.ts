@@ -242,3 +242,16 @@ export const getMarkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
 	}
 	return data as supabaseWorkout[];
 }
+
+export const getAllWorkouts = async (): Promise<supabaseWorkout[]> => {
+	const { data, error } = await supabase
+		.from('workouts')
+		.select('*')
+		.order('created_at', { ascending: false });
+
+	if (error) {
+		handleError(error)
+	}
+
+	return data as supabaseWorkout[];
+}

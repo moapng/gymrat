@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import Lift from '$lib/components/Lift.svelte';
 	import { TexasRepetitions } from '$lib/interfaces';
-	import { cycleState } from '$lib/stores/workout.svelte';
+	import { blockState } from '$lib/stores/workout.svelte';
 	import Toast from '$lib/components/Toast.svelte';
 	import Popper from '$lib/components/Popper.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -22,7 +22,7 @@
 		if (RPElocalStorage) {
 			RPE = JSON.parse(RPElocalStorage);
 		}
-		repetitions = TexasRepetitions[cycleState.cycle.texas_week];
+		repetitions = TexasRepetitions[blockState.block.texas_week];
 	});
 
 	$effect(() => {
@@ -34,9 +34,9 @@
 
 {#if userState.user}
 	<header class="flex w-full justify-between">
-		<p>{data.cycle?.program_name}</p>
-		<p>{data.cycle?.cycle}</p>
-		<p>{data.cycle?.texas_week}</p>
+		<p>{data.block?.program_name}</p>
+		<p>{data.block?.block}</p>
+		<p>{data.block?.texas_week}</p>
 	</header>
 
 	<section class="flex flex-col w-full items-center fixed bottom-0">

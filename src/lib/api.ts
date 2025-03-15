@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { ToastType, type Lift, type supabaseCycle, type supabasePR, type supabaseWorkout, type TexasWeek } from './interfaces';
+import { ToastType, type Lift, type supabaseBlock, type supabasePR, type supabaseWorkout, type TexasWeek } from './interfaces';
 import { toastState } from './stores/toast.svelte';
 import { Temporal } from '@js-temporal/polyfill';
 
@@ -34,10 +34,10 @@ export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number | 
 	return PR && PR.length > 0 ? PR[0].weight : 0;
 };
 
-export const getUserCycleId = async (currentUser: string) => {
+export const getUserBlockId = async (currentUser: string) => {
 	const { data, error, statusText } = await supabase
 		.from('user')
-		.select('cycle_id')
+		.select('block_id')
 		.eq('user_name', currentUser)
 		.limit(1)
 		.single()
@@ -47,14 +47,14 @@ export const getUserCycleId = async (currentUser: string) => {
 	} else {
 		handleSuccess(statusText);
 	}
-	return data ? data.cycle_id : null;
+	return data ? data.block_id : null;
 }
 
-export const getCycle = async (cycleId: string): Promise<supabaseCycle | null> => {
-	const { data: cycle, error, statusText } = await supabase
-		.from('cycle')
+export const getBlock = async (blockId: string): Promise<supabaseBlock | null> => {
+	const { data: block, error, statusText } = await supabase
+		.from('blocks')
 		.select('*')
-		.eq('id', cycleId)
+		.eq('id', blockId)
 		.limit(1)
 		.single()
 
@@ -64,15 +64,15 @@ export const getCycle = async (cycleId: string): Promise<supabaseCycle | null> =
 		handleSuccess(statusText);
 	}
 
-	return cycle ? cycle : null;
+	return block ? block : null;
 }
 
-export const insertNewCycle = async (latestCycle: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseCycle; status: number } | null> => {
+export const insertNewBlock = async (latestBlock: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseBlock; status: number } | null> => {
 	const { data, status, error } = await supabase
-		.from('cycle')
+		.from('blocks')
 		.insert([
 			{
-				cycle: latestCycle + 1,
+				block: latestBlock + 1,
 				'user_name': userName ?? import.meta.env.MY_USER,
 				'program_name': programName,
 				'texas_week': texasWeek
@@ -90,11 +90,11 @@ export const insertNewCycle = async (latestCycle: number, userName: string, prog
 	return { data, status };
 }
 
-export const updateCycle = async (cycleId: string, column: string, value: any): Promise<supabaseCycle | null> => {
-	const { data: cycle, error } = await supabase
-		.from('cycle')
+export const updateBlock = async (blockId: string, column: string, value: any): Promise<supabaseBlock | null> => {
+	const { data: block, error } = await supabase
+		.from('blocks')
 		.update({ [column]: value })
-		.eq('id', cycleId)
+		.eq('id', blockId)
 		.select()
 		.limit(1)
 		.single();
@@ -104,13 +104,13 @@ export const updateCycle = async (cycleId: string, column: string, value: any): 
 	} else {
 		handleSuccess(`uppdaterat cykeln`);
 	}
-	return cycle ? cycle : null;
+	return block ? block : null;
 }
 
-export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle> => {
+export const getLatestBlock = async (currentUser: string): Promise<supabaseBlock> => {
 
-	const { data: cycle, error } = await supabase
-		.from('cycle')
+	const { data: block, error } = await supabase
+		.from('blocks')
 		.select('*')
 		.eq('user_name', currentUser)
 		.order('started_at', { ascending: false })
@@ -120,11 +120,11 @@ export const getLatestCycle = async (currentUser: string): Promise<supabaseCycle
 	if (error) {
 		handleError(error)
 	}
-	return cycle ? cycle : null;
+	return block ? block : null;
 
 }
 
-export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, programName: string, cycleId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
+export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, comment: string, programName: string, blockId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
 	const { data, status, error } = await supabase
 		.from('workouts')
 		.insert([
@@ -134,7 +134,8 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 				weight: weight,
 				repetitions: repetitions,
 				workout_rating: workoutRating,
-				cycle_id: cycleId,
+				comment: comment,
+				block_id: blockId,
 				program_name: programName
 			},
 		])

@@ -14,10 +14,10 @@ export interface supabasePR {
 	workout_id?: string;
 	repetitions: number;
 }
-export interface supabaseCycle {
+export interface supabaseBlock {
 	id: string;
 	started_at: Temporal.PlainDateTime;
-	cycle: number;
+	block: number;
 	bänk_count: boolean;
 	böj_count: boolean;
 	mark_count: boolean;
@@ -34,7 +34,7 @@ export interface supabaseProgram {
 export interface supabaseUser {
 	user_name: string;
 	chosen_program_name: string;
-	current_texas_week: string;
+	program_state: string;
 }
 export interface supabaseWorkout {
 	id: string;
@@ -42,10 +42,11 @@ export interface supabaseWorkout {
 	achieved_at?: Temporal.PlainDateTime;
 	lift: Lift;
 	weight: number;
-	cycle_id: string;
+	block_id: string;
 	repetitions: number;
 	program_name: string;
 	workout_rating: string;
+	comment: string;
 }
 
 export enum Lift {

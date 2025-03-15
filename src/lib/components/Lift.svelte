@@ -3,7 +3,7 @@
 	import { Lift, TexasFactor, TexasRepetitions, type OneRepMax } from '$lib/interfaces';
 	import { calculateTexasMethod, roundToNearestTwoPointFive } from '$lib/math';
 	import { hidePopper, popperState, showPopper } from '$lib/stores/popper.svelte';
-	import { cycleState } from '$lib/stores/workout.svelte';
+	import { blockState } from '$lib/stores/workout.svelte';
 	import RateSet from './RateSet.svelte';
 
 	let { data, RPE = $bindable(), repetitions = $bindable() } = $props();
@@ -18,8 +18,8 @@
 	});
 	let calculatedWithTexasMethod: OneRepMax = Object.entries(oneRepMax)
 		.map(([key, value]) => {
-			if (cycleState.cycle) {
-				const texasValue = calculateTexasMethod(value, +TexasFactor[cycleState.cycle.texas_week]);
+			if (blockState.block) {
+				const texasValue = calculateTexasMethod(value, +TexasFactor[blockState.block.texas_week]);
 
 				return { [key]: roundToNearestTwoPointFive(texasValue) };
 			}
@@ -42,7 +42,7 @@
 			showPopper(e.currentTarget as HTMLElement, RateSet, {
 				lift: liftOpen,
 				weight: calculatedWithTexasMethod[liftOpen],
-				repetitions: TexasRepetitions[cycleState.cycle.texas_week]
+				repetitions: TexasRepetitions[blockState.block.texas_week]
 			});
 		} else {
 			hidePopper();
@@ -55,17 +55,17 @@
 		return relevantLift?.created_at || 'ingen data';
 	};
 
-	// hämta alla workouts för CYCLE ID, om jag har en av varje, tillåt cycle++, annars dubbelkolla?
+	// hämta alla workouts för BLOCK ID, om jag har en av varje, tillåt block++, annars dubbelkolla?
 </script>
 
 {#snippet liftSnippet(lift: Lift)}
 	<dl class="text-secondary w-full align-center">
 		<button onclick={() => toggleAccordion(lift)} class="btn btn-primary w-full">
-			<dt>{lift} {cycleState.cycle?.[`${lift}_count`]}</dt>
+			<dt>{lift} {blockState.block?.[`${lift}_count`]}</dt>
 		</button>
 		{#if isOpen[lift]}
 			<dd class="m-4 flex justify-between">
-				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[cycleState.cycle.texas_week]}
+				{calculatedWithTexasMethod[lift]} x {TexasRepetitions[blockState.block.texas_week]}
 				<div>
 					{#each data.todaysWorkouts as workout}
 						{#if workout.lift === lift}

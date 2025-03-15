@@ -1,13 +1,34 @@
 @use 'variables.scss' as *;
 @use 'app.scss';
 
-// Position
+// Mixins
+@mixin position($pos) {
+	position: $pos;
+}
+
+@mixin spacing($property, $value) {
+	#{$property}: $value;
+}
+
+@mixin grid-template($type, $count) {
+	grid-template-#{$type}: repeat($count, minmax(0, 1fr));
+}
+
+@mixin col-span($span) {
+	grid-column: span $span;
+}
+
+@mixin gap($size) {
+	gap: $size;
+}
+
+// Position Utilities
 .absolute {
-	position: absolute;
+	@include position(absolute);
 }
 
 .fixed {
-	position: fixed;
+	@include position(fixed);
 }
 
 .top-0 {
@@ -131,7 +152,7 @@
 }
 
 .shadow-lg {
-	box-shadow: 0 20px 100px $shadow-color
+	box-shadow: 0 20px 100px $shadow-color;
 }
 
 // Grid Utilities
@@ -139,56 +160,18 @@
 	display: grid;
 }
 
-.grid-cols-1 {
-	grid-template-columns: repeat(1, minmax(0, 1fr));
-}
+@for $i from 1 through 6 {
+	.grid-cols-#{$i} {
+		@include grid-template(columns, $i);
+	}
 
-.grid-cols-2 {
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.grid-cols-3 {
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.grid-cols-4 {
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.grid-cols-5 {
-	grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.grid-cols-6 {
-	grid-template-columns: repeat(6, minmax(0, 1fr));
+	.grid-rows-#{$i} {
+		@include grid-template(rows, $i);
+	}
 }
 
 .grid-cols-none {
 	grid-template-columns: none;
-}
-
-.grid-rows-1 {
-	grid-template-rows: repeat(1, minmax(0, 1fr));
-}
-
-.grid-rows-2 {
-	grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
-.grid-rows-3 {
-	grid-template-rows: repeat(3, minmax(0, 1fr));
-}
-
-.grid-rows-4 {
-	grid-template-rows: repeat(4, minmax(0, 1fr));
-}
-
-.grid-rows-5 {
-	grid-template-rows: repeat(5, minmax(0, 1fr));
-}
-
-.grid-rows-6 {
-	grid-template-rows: repeat(6, minmax(0, 1fr));
 }
 
 .grid-rows-none {
@@ -196,318 +179,78 @@
 }
 
 // Col spans
-.col-span-1 {
-	grid-column: span 1;
-}
-
-.col-span-2 {
-	grid-column: span 2;
+@for $i from 1 through 3 {
+	.col-span-#{$i} {
+		@include col-span($i);
+	}
 }
 
 // Gap Utilities
-.gap-1 {
-	gap: 0.25rem;
-}
+$gap-sizes: (
+	0.25rem,
+	0.5rem,
+	0.75rem,
+	1rem,
+	1.25rem,
+	1.5rem,
+	2rem,
+	2.5rem,
+	3rem
+);
 
-.gap-2 {
-	gap: 0.5rem;
-}
-
-.gap-3 {
-	gap: 0.75rem;
-}
-
-.gap-4 {
-	gap: 1rem;
-}
-
-.gap-5 {
-	gap: 1.25rem;
-}
-
-.gap-6 {
-	gap: 1.5rem;
-}
-
-.gap-8 {
-	gap: 2rem;
-}
-
-.gap-10 {
-	gap: 2.5rem;
-}
-
-.gap-12 {
-	gap: 3rem;
+@each $size, $index in $gap-sizes {
+	.gap-#{$index + 1} {
+		@include gap($size);
+	}
 }
 
 // Padding Utilities
-.p-0 {
-	padding: 0;
-}
+@for $i from 0 through 12 {
+	.p-#{$i} {
+		@include spacing(padding, $i * 0.25rem);
+	}
 
-.p-1 {
-	padding: 0.25rem;
-}
+	.py-#{$i} {
+		padding-top: $i * 0.25rem;
+		padding-bottom: $i * 0.25rem;
+	}
 
-.p-2 {
-	padding: 0.5rem;
-}
+	.px-#{$i} {
+		padding-left: $i * 0.25rem;
+		padding-right: $i * 0.25rem;
+	}
 
-.p-3 {
-	padding: 0.75rem;
-}
+	.pt-#{$i} {
+		padding-top: $i * 0.25rem;
+	}
 
-.p-4 {
-	padding: 1rem;
-}
-
-.p-5 {
-	padding: 1.25rem;
-}
-
-.p-6 {
-	padding: 1.5rem;
-}
-
-.p-8 {
-	padding: 2rem;
-}
-
-.p-10 {
-	padding: 2.5rem;
-}
-
-.p-12 {
-	padding: 3rem;
-}
-
-.py-1 {
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
-}
-
-.py-2 {
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-}
-
-.py-3 {
-	padding-top: 0.75rem;
-	padding-bottom: 0.75rem;
-}
-
-.py-4 {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-}
-
-.py-5 {
-	padding-top: 1.25rem;
-	padding-bottom: 1.25rem;
-}
-
-.py-6 {
-	padding-top: 1.5rem;
-	padding-bottom: 1.5rem;
-}
-
-.py-8 {
-	padding-top: 2rem;
-	padding-bottom: 2rem;
-}
-
-.py-10 {
-	padding-top: 2.5rem;
-	padding-bottom: 2.5rem;
-}
-
-.py-12 {
-	padding-top: 3rem;
-	padding-bottom: 3rem;
-}
-
-.px-1 {
-	padding-left: 0.25rem;
-	padding-right: 0.25rem;
-}
-
-.px-2 {
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
-}
-
-.px-3 {
-	padding-left: 0.75rem;
-	padding-right: 0.75rem;
-}
-
-.px-4 {
-	padding-left: 1rem;
-	padding-right: 1rem;
-}
-
-.px-5 {
-	padding-left: 1.25rem;
-	padding-right: 1.25rem;
-}
-
-.px-6 {
-	padding-left: 1.5rem;
-	padding-right: 1.5rem;
-}
-
-.px-8 {
-	padding-left: 2rem;
-	padding-right: 2rem;
-}
-
-.px-10 {
-	padding-left: 2.5rem;
-	padding-right: 2.5rem;
-}
-
-.px-12 {
-	padding-left: 3rem;
-	padding-right: 3rem;
-}
-
-.pt-1 {
-	padding-top: 0.25rem;
-}
-
-.pt-2 {
-	padding-top: 0.5rem;
-}
-
-.pt-3 {
-	padding-top: 0.75rem;
-}
-
-.pt-4 {
-	padding-top: 1rem;
-}
-
-.pt-5 {
-	padding-top: 1.25rem;
-}
-
-.pt-6 {
-	padding-top: 1.5rem;
-}
-
-.pt-8 {
-	padding-top: 2rem;
-}
-
-.pt-10 {
-	padding-top: 2.5rem;
-}
-
-.pt-12 {
-	padding-top: 3rem;
-}
-
-.pb-1 {
-	padding-bottom: 0.25rem;
-}
-
-.pb-2 {
-	padding-bottom: 0.5rem;
-}
-
-.pb-3 {
-	padding-bottom: 0.75rem;
-}
-
-.pb-4 {
-	padding-bottom: 1rem;
-}
-
-.pb-5 {
-	padding-bottom: 1.25rem;
-}
-
-.pb-6 {
-	padding-bottom: 1.5rem;
-}
-
-.pb-8 {
-	padding-bottom: 2rem;
-}
-
-.pb-10 {
-	padding-bottom: 2.5rem;
-}
-
-.pb-12 {
-	padding-bottom: 3rem;
+	.pb-#{$i} {
+		padding-bottom: $i * 0.25rem;
+	}
 }
 
 // Margin Utilities
-.m-1 {
-	margin: 0.25rem;
-}
-
-.m-2 {
-	margin: 0.5rem;
-}
-
-.m-3 {
-	margin: 0.75rem;
-}
-
-.m-4 {
-	margin: 1rem;
-}
-
-.m-5 {
-	margin: 1.25rem;
-}
-
-.m-6 {
-	margin: 1.5rem;
-}
-
-.m-8 {
-	margin: 2rem;
-}
-
-.m-10 {
-	margin: 2.5rem;
-}
-
-.m-12 {
-	margin: 3rem;
+@for $i from 1 through 12 {
+	.m-#{$i} {
+		@include spacing(margin, $i * 0.25rem);
+	}
 }
 
 // Width
-.w-2 {
-	width: 2rem;
-}
-
-.w-4 {
-	width: 4rem;
-}
-
-.w-8 {
-	width: 8rem;
+@for $i from 2 through 8 {
+	.w-#{$i} {
+		width: #{$i}rem;
+	}
 }
 
 // Height
-.h-2 {
-	height: 2rem;
+@for $i from 2 through 8 {
+	.h-#{$i} {
+		height: #{$i}rem;
+	}
 }
 
-.h-4 {
-	height: 4rem;
-}
-
-.h-8 {
-	height: 8rem;
-}
-
-//Border
+// Border
 .b-0 {
 	border: none;
 }
@@ -518,7 +261,6 @@
 	border-radius: $border-radius;
 	border-width: 1px;
 	border-style: solid;
-
 	cursor: pointer;
 
 	&.btn-primary {
@@ -534,6 +276,7 @@
 	}
 }
 
+// Background Colors
 .bg {
 	background-color: $background-color;
 }
@@ -551,6 +294,7 @@
 	backdrop-filter: blur($glass-blur);
 }
 
+// Text Colors
 .text-primary {
 	color: $primary-color;
 }
@@ -559,16 +303,15 @@
 	color: $secondary-color;
 }
 
-.text {
-	&-small {
-		font-size: 0.75rem;
-	}
+// Text Sizes
+.text-small {
+	font-size: 0.75rem;
+}
 
-	&-medium {
-		font-size: 1rem;
-	}
+.text-medium {
+	font-size: 1rem;
+}
 
-	&-large {
-		font-size: 1.25rem;
-	}
+.text-large {
+	font-size: 1.25rem;
 }

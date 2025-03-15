@@ -1,28 +1,29 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { insertWorkout, updateCycle } from '$lib/api';
-	import { cycleState } from '$lib/stores/workout.svelte';
+	import { insertWorkout, updateBlock } from '$lib/api';
+	import { blockState } from '$lib/stores/workout.svelte';
 
 	let { lift, weight, repetitions } = $props();
 
 	let allSetsDone = $state(false);
 	// TODO: automatisk om senaste setten e 4 av böj tex ?
 	const handleClick = async (rating: string) => {
-		const cycle = cycleState.cycle;
+		const block = blockState.block;
 
-		if (cycleState && cycle) {
+		if (blockState && block) {
 			const workoutResponse = await insertWorkout(
 				lift,
 				weight,
 				repetitions,
 				rating,
-				cycleState.cycle.program_name,
-				cycle.id
+				comment,
+				blockState.block.program_name,
+				block.id
 			);
 
 			// const column = lift + '_done';
 			// if (allSetsDone && workoutResponse?.data) {
-			// 	updateCycle(cycle.id, column, true);
+			// 	updateBlock(block.id, column, true);
 			// }
 		}
 		setTimeout(() => {
@@ -31,6 +32,8 @@
 	};
 
 	const ratings = ['🔥', '😌', '😐', '😞', '💩'];
+
+	let comment = $state('');
 </script>
 
 <div class="grid grid-cols-2">
@@ -45,6 +48,7 @@
 		</button>
 	{/each}
 	<!-- <input type="checkbox" bind:checked={allSetsDone} /> -->
+	<input type="text" bind:value={comment} placeholder="kommentar" class="col-span-3" />
 </div>
 <div class="grid grid-cols-2">
 	<input class="w-4 col-span-2" type="text" inputmode="numeric" bind:value={repetitions} />

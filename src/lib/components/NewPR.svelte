@@ -3,7 +3,7 @@
 	import { Lift, ToastType } from '$lib/interfaces';
 	import { hidePopper } from '$lib/stores/popper.svelte';
 	import { toastState } from '$lib/stores/toast.svelte';
-	import { cycleState } from '$lib/stores/workout.svelte';
+	import { blockState } from '$lib/stores/workout.svelte';
 
 	let weight = $state(0);
 	let repetitions = $state(0);
@@ -15,14 +15,14 @@
 			toastState.type = ToastType.error;
 			toastState.visible = true;
 		} else {
-			if (cycleState.cycle) {
+			if (blockState.block) {
 				const workoutResponse = await insertWorkout(
 					lift,
 					weight,
 					repetitions,
 					'🔥',
-					cycleState.cycle.program_name,
-					cycleState.cycle.id
+					blockState.block.program_name,
+					blockState.block.id
 				);
 				if (workoutResponse?.status === 201) {
 					insertPR(

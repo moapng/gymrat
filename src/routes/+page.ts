@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
-import { get1RM, getLatestCycle, getTodaysWorkouts } from '$lib/api';
+import { get1RM, getLatestBlock, getTodaysWorkouts } from '$lib/api';
 import { Lift } from '$lib/interfaces';
 import { userState } from '$lib/stores/user.svelte';
-import { cycleState } from '$lib/stores/workout.svelte';
+import { blockState } from '$lib/stores/workout.svelte';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
@@ -17,15 +17,15 @@ export const load: PageLoad = async () => {
 		;
 		userState.user = sessionObject?.user;
 		if (userState.user) {
-			const cycle = await getLatestCycle(userName);
-			cycleState.cycle = cycle;
+			const block = await getLatestBlock(userName);
+			blockState.block = block;
 			const böj = await get1RM(Lift.böj)
 			const bänk = await get1RM(Lift.bänk);
 			const mark = await get1RM(Lift.mark);
 
 			const todaysWorkouts = await getTodaysWorkouts();
 
-			return { cycle, böj, bänk, mark, todaysWorkouts }
+			return { block, böj, bänk, mark, todaysWorkouts }
 		}
 	}
 };

@@ -3,6 +3,8 @@ import { ToastType, type Lift, type supabaseBlock, type supabasePR, type supabas
 import { toastState } from './stores/toast.svelte';
 import { Temporal } from '@js-temporal/polyfill';
 
+const TIMEZONE = 'Europe/Stockholm';
+
 const handleError = (error: Error) => {
 	console.error(error)
 	toastState.text = error.message;
@@ -16,6 +18,46 @@ const handleSuccess = (message: string) => {
 	toastState.type = ToastType.success;
 	toastState.visible = true;
 }
+
+const toZonedDateTime = (date: string | Temporal.Instant | Temporal.PlainDateTime | Temporal.ZonedDateTime | null | undefined): Temporal.ZonedDateTime | undefined => {
+	if (!date) return undefined;
+
+	if (date instanceof Temporal.ZonedDateTime) {
+		return date;
+	} else if (date instanceof Temporal.PlainDateTime) {
+		return date.toZonedDateTime(TIMEZONE);
+	} else if (date instanceof Temporal.Instant) {
+		return date.toZonedDateTimeISO(TIMEZONE);
+	} else if (typeof date === 'string') {
+		try {
+			return Temporal.Instant.from(date).toZonedDateTimeISO(TIMEZONE);
+		} catch (e) {
+			try {
+				return Temporal.PlainDateTime.from(date).toZonedDateTime(TIMEZONE);
+			} catch (e) {
+				console.error('Could not parse date:', date, e);
+				return undefined;
+			}
+		}
+	}
+
+	return undefined;
+};
+
+const processWorkoutData = <T extends { created_at?: any, achieved_at?: any }>(data: T[]): T[] => {
+	if (!data) return [];
+
+	return data.map(item => {
+		const processed = { ...item };
+		if (item.created_at) {
+			processed.created_at = toZonedDateTime(item.created_at);
+		}
+		if (item.achieved_at) {
+			processed.achieved_at = toZonedDateTime(item.achieved_at);
+		}
+		return processed;
+	});
+};
 
 export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number | null> => {
 	const { data: PR, error, statusText } = await supabase
@@ -64,8 +106,12 @@ export const getBlock = async (blockId: string): Promise<supabaseBlock | null> =
 		handleSuccess(statusText);
 	}
 
+	if (block && block.started_at) {
+		block.started_at = toZonedDateTime(block.started_at);
+	}
+
 	return block ? block : null;
-}
+};
 
 export const insertNewBlock = async (latestBlock: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseBlock; status: number } | null> => {
 	const { data, status, error } = await supabase
@@ -120,17 +166,24 @@ export const getLatestBlock = async (currentUser: string): Promise<supabaseBlock
 	if (error) {
 		handleError(error)
 	}
+
+	if (block && block.started_at) {
+		block.started_at = toZonedDateTime(block.started_at);
+	}
+
 	return block ? block : null;
 
 }
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, comment: string, programName: string, blockId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
+	const now = new Date().toISOString();
+
 	const { data, status, error } = await supabase
 		.from('workouts')
 		.insert([
 			{
 				lift: lift,
-				created_at: Temporal.Now.zonedDateTimeISO().toPlainDateTime(),
+				created_at: now,
 				weight: weight,
 				repetitions: repetitions,
 				workout_rating: workoutRating,
@@ -148,6 +201,14 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 	} else {
 		handleSuccess('lagt till set');
 	};
+
+	if (data) {
+		data.created_at = toZonedDateTime(data.created_at);
+		if (data.achieved_at) {
+			data.achieved_at = toZonedDateTime(data.achieved_at);
+		}
+	}
+
 	return { data, status };
 }
 
@@ -175,14 +236,9 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 }
 
 export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
-
-	const now = Temporal.Now.zonedDateTimeISO();
-	const startOfDay = now.with({ hour: 0, minute: 0, second: 0, }).toPlainDateTime();
-	const endOfDay = now.with({
-		hour: 23,
-		minute: 59,
-		second: 59,
-	}).toPlainDateTime();
+	const now = Temporal.Now.plainDateISO();
+	const startOfDay = now.toString() + 'T00:00:00';
+	const endOfDay = now.toString() + 'T23:59:59';
 
 	const { data, error } = await supabase
 		.from('workouts')
@@ -191,9 +247,10 @@ export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
 		.lt('created_at', endOfDay);
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
-	return data as supabaseWorkout[];
+
+	return data ? processWorkoutData(data) : [];
 }
 
 export const latestCompletedWorkoutForEachLift = async (): Promise<supabaseWorkout[]> => {
@@ -202,10 +259,10 @@ export const latestCompletedWorkoutForEachLift = async (): Promise<supabaseWorko
 		.select('*');
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
-	return data as supabaseWorkout[];
 
+	return data ? processWorkoutData(data) : [];
 }
 
 export const getBöjOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
@@ -215,9 +272,10 @@ export const getBöjOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
 		.order('achieved_at', { ascending: true });
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
-	return data as supabaseWorkout[];
+
+	return data ? processWorkoutData(data) : [];
 }
 
 export const getBänkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
@@ -227,9 +285,10 @@ export const getBänkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
 		.order('achieved_at', { ascending: true });
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
-	return data as supabaseWorkout[];
+
+	return data ? processWorkoutData(data) : [];
 }
 
 export const getMarkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
@@ -239,9 +298,10 @@ export const getMarkOneRepMaxes = async (): Promise<supabaseWorkout[]> => {
 		.order('achieved_at', { ascending: true });
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
-	return data as supabaseWorkout[];
+
+	return data ? processWorkoutData(data) : [];
 }
 
 export const getAllWorkouts = async (): Promise<supabaseWorkout[]> => {
@@ -251,19 +311,8 @@ export const getAllWorkouts = async (): Promise<supabaseWorkout[]> => {
 		.order('created_at', { ascending: false });
 
 	if (error) {
-		handleError(error)
+		handleError(error);
 	}
 
-	if (data) {
-		data.forEach(workout => {
-			if (workout.created_at) {
-				workout.created_at = Temporal.Instant.from(workout.created_at).toZonedDateTimeISO('Europe/Stockholm');
-			}
-			if (workout.achieved_at) {
-				workout.achieved_at = Temporal.Instant.from(workout.achieved_at).toZonedDateTimeISO('Europe/Stockholm');
-			}
-		});
-	}
-
-	return data as supabaseWorkout[];
+	return data ? processWorkoutData(data) : [];
 }

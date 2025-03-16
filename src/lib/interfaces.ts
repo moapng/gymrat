@@ -8,7 +8,7 @@ export const very_light_purple_rgb = 'rgb(194, 152, 230)';
 
 export interface supabasePR {
 	id: number;
-	achieved_at: Temporal.PlainDateTime;
+	achieved_at: Temporal.ZonedDateTime;
 	lift: string;
 	weight: number;
 	workout_id?: string;
@@ -16,7 +16,7 @@ export interface supabasePR {
 }
 export interface supabaseBlock {
 	id: string;
-	started_at: Temporal.PlainDateTime;
+	started_at: Temporal.ZonedDateTime;
 	block: number;
 	bänk_count: boolean;
 	böj_count: boolean;
@@ -27,7 +27,7 @@ export interface supabaseBlock {
 }
 
 export interface supabaseProgram {
-	created_at: Temporal.PlainDateTime;
+	created_at: Temporal.ZonedDateTime;
 	name: string;
 	formula: object;
 }

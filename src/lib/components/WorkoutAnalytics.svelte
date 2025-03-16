@@ -54,15 +54,7 @@
 						]
 					}
 				}
-			],
-			toolbox: {
-				feature: {
-					saveAsImage: {},
-					dataZoom: {},
-					restore: {},
-					dataView: {}
-				}
-			}
+			]
 		};
 
 		chart.setOption(option);
@@ -90,7 +82,11 @@
 
 		return dateFiltered.sort((a, b) => {
 			if (!a.created_at || !b.created_at) return 0;
-			return Temporal.ZonedDateTime.compare(b.created_at, a.created_at);
+
+			// sort ascending for chart, descending for table
+			return showChart
+				? Temporal.ZonedDateTime.compare(a.created_at, b.created_at)
+				: Temporal.ZonedDateTime.compare(b.created_at, a.created_at);
 		});
 	};
 
@@ -117,9 +113,13 @@
 	</div>
 
 	<div class="view-toggle">
-		<label class="switch">
+		<label class="cute-switch">
 			<input type="checkbox" bind:checked={showChart} />
-			<span class="slider"></span>
+			<span class="slider">
+				<span class="slider-icon">
+					{#if showChart}📊{:else}📋{/if}
+				</span>
+			</span>
 		</label>
 		<span class="toggle-label">{showChart ? 'Visa tabell' : 'Visa graf'}</span>
 	</div>
@@ -210,5 +210,83 @@
 		padding: 0.5rem;
 		border-radius: 4px;
 		border: 1px solid #ddd;
+	}
+
+	.view-toggle {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin: 0.5rem 0;
+	}
+
+	.cute-switch {
+		position: relative;
+		display: inline-block;
+		width: 60px;
+		height: 30px;
+		cursor: pointer;
+	}
+
+	.cute-switch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	.slider {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(to right, #c298e6, #f451d3);
+		border-radius: 30px;
+		transition: 0.4s;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+	}
+
+	.slider:before {
+		position: absolute;
+		content: '';
+		height: 22px;
+		width: 22px;
+		left: 4px;
+		bottom: 4px;
+		background-color: white;
+		border-radius: 50%;
+		transition: 0.4s;
+		z-index: 1;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.slider-icon {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		padding: 0 8px;
+		box-sizing: border-box;
+		font-size: 14px;
+		transition: 0.4s;
+	}
+
+	input:checked + .slider:before {
+		transform: translateX(30px);
+	}
+
+	input:focus + .slider {
+		box-shadow: 0 0 3px #ad52f8;
+	}
+
+	input:checked + .slider {
+		background: linear-gradient(to right, #ad52f8, #410077);
+	}
+
+	.toggle-label {
+		font-weight: 500;
+		user-select: none;
 	}
 </style>

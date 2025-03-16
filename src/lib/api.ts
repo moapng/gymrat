@@ -1,9 +1,13 @@
 import { supabase } from './supabase';
 import { ToastType, type Lift, type supabaseBlock, type supabasePR, type supabaseWorkout, type TexasWeek } from './interfaces';
 import { toastState } from './stores/toast.svelte';
-import { Temporal } from '@js-temporal/polyfill';
-
-const TIMEZONE = 'Europe/Stockholm';
+import {
+	processWorkoutData,
+	processBlockData,
+	createTimestamp,
+	getStartOfDay,
+	getEndOfDay
+} from './temporal-service';
 
 const handleError = (error: Error) => {
 	console.error(error)
@@ -18,46 +22,6 @@ const handleSuccess = (message: string) => {
 	toastState.type = ToastType.success;
 	toastState.visible = true;
 }
-
-const toZonedDateTime = (date: string | Temporal.Instant | Temporal.PlainDateTime | Temporal.ZonedDateTime | null | undefined): Temporal.ZonedDateTime | undefined => {
-	if (!date) return undefined;
-
-	if (date instanceof Temporal.ZonedDateTime) {
-		return date;
-	} else if (date instanceof Temporal.PlainDateTime) {
-		return date.toZonedDateTime(TIMEZONE);
-	} else if (date instanceof Temporal.Instant) {
-		return date.toZonedDateTimeISO(TIMEZONE);
-	} else if (typeof date === 'string') {
-		try {
-			return Temporal.Instant.from(date).toZonedDateTimeISO(TIMEZONE);
-		} catch (e) {
-			try {
-				return Temporal.PlainDateTime.from(date).toZonedDateTime(TIMEZONE);
-			} catch (e) {
-				console.error('Could not parse date:', date, e);
-				return undefined;
-			}
-		}
-	}
-
-	return undefined;
-};
-
-const processWorkoutData = <T extends { created_at?: any, achieved_at?: any }>(data: T[]): T[] => {
-	if (!data) return [];
-
-	return data.map(item => {
-		const processed = { ...item };
-		if (item.created_at) {
-			processed.created_at = toZonedDateTime(item.created_at);
-		}
-		if (item.achieved_at) {
-			processed.achieved_at = toZonedDateTime(item.achieved_at);
-		}
-		return processed;
-	});
-};
 
 export const get1RM = async (lift: 'böj' | 'bänk' | 'mark'): Promise<number | null> => {
 	const { data: PR, error, statusText } = await supabase
@@ -106,11 +70,7 @@ export const getBlock = async (blockId: string): Promise<supabaseBlock | null> =
 		handleSuccess(statusText);
 	}
 
-	if (block && block.started_at) {
-		block.started_at = toZonedDateTime(block.started_at);
-	}
-
-	return block ? block : null;
+	return block ? processBlockData(block) : null;
 };
 
 export const insertNewBlock = async (latestBlock: number, userName: string, programName: string, texasWeek: TexasWeek): Promise<{ data: supabaseBlock; status: number } | null> => {
@@ -150,11 +110,10 @@ export const updateBlock = async (blockId: string, column: string, value: any): 
 	} else {
 		handleSuccess(`uppdaterat cykeln`);
 	}
-	return block ? block : null;
+	return block ? processBlockData(block) : null;
 }
 
 export const getLatestBlock = async (currentUser: string): Promise<supabaseBlock> => {
-
 	const { data: block, error } = await supabase
 		.from('blocks')
 		.select('*')
@@ -167,16 +126,11 @@ export const getLatestBlock = async (currentUser: string): Promise<supabaseBlock
 		handleError(error)
 	}
 
-	if (block && block.started_at) {
-		block.started_at = toZonedDateTime(block.started_at);
-	}
-
-	return block ? block : null;
-
+	return block ? processBlockData(block) : null;
 }
 
 export const insertWorkout = async (lift: Lift, weight: number, repetitions: number, workoutRating: string, comment: string, programName: string, blockId: string): Promise<{ data: supabaseWorkout; status: number } | null> => {
-	const now = new Date().toISOString();
+	const now = createTimestamp();
 
 	const { data, status, error } = await supabase
 		.from('workouts')
@@ -202,14 +156,9 @@ export const insertWorkout = async (lift: Lift, weight: number, repetitions: num
 		handleSuccess('lagt till set');
 	};
 
-	if (data) {
-		data.created_at = toZonedDateTime(data.created_at);
-		if (data.achieved_at) {
-			data.achieved_at = toZonedDateTime(data.achieved_at);
-		}
-	}
+	const processedData = data ? processWorkoutData([data])[0] : null;
 
-	return { data, status };
+	return processedData ? { data: processedData, status } : null;
 }
 
 export const insertPR = async (lift: Lift, weight: number, repetitions: number, workoutId: string): Promise<{ data: supabasePR; status: number } | null> => {
@@ -236,9 +185,8 @@ export const insertPR = async (lift: Lift, weight: number, repetitions: number, 
 }
 
 export const getTodaysWorkouts = async (): Promise<supabaseWorkout[]> => {
-	const now = Temporal.Now.plainDateISO();
-	const startOfDay = now.toString() + 'T00:00:00';
-	const endOfDay = now.toString() + 'T23:59:59';
+	const startOfDay = getStartOfDay();
+	const endOfDay = getEndOfDay();
 
 	const { data, error } = await supabase
 		.from('workouts')
@@ -315,4 +263,4 @@ export const getAllWorkouts = async (): Promise<supabaseWorkout[]> => {
 	}
 
 	return data ? processWorkoutData(data) : [];
-}
+};

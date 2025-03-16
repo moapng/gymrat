@@ -4,6 +4,7 @@
 	import { Temporal } from '@js-temporal/polyfill';
 	import * as echarts from 'echarts';
 	import { onMount } from 'svelte';
+	import { formatDate, getDateRanges, DEFAULT_TIMEZONE } from '$lib/temporal-service';
 
 	let allWorkouts: supabaseWorkout[] = $state([]);
 	let timeFilter = $state('monthly');
@@ -11,21 +12,7 @@
 	let chart: echarts.ECharts | null = null;
 	let showChart = $state(false);
 
-	const TIMEZONE = 'Europe/Stockholm';
-
-	let timeRanges = $state({
-		sevenDaysAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 7 }),
-		thirtyDaysAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 30 }),
-		yearAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 365 })
-	});
-
-	function formatDate(date: Temporal.ZonedDateTime | undefined): string {
-		if (!date) return '';
-		return date.toLocaleString('sv-SE', {
-			dateStyle: 'short',
-			timeStyle: 'short'
-		});
-	}
+	let timeRanges = $state(getDateRanges());
 
 	onMount(async () => {
 		allWorkouts = await getAllWorkouts();
@@ -103,7 +90,7 @@
 
 		return dateFiltered.sort((a, b) => {
 			if (!a.created_at || !b.created_at) return 0;
-			return Temporal.ZonedDateTime.compare(a.created_at, b.created_at);
+			return Temporal.ZonedDateTime.compare(b.created_at, a.created_at);
 		});
 	};
 

@@ -38,8 +38,8 @@ export interface supabaseUser {
 }
 export interface supabaseWorkout {
 	id: string;
-	created_at?: Temporal.PlainDateTime;
-	achieved_at?: Temporal.PlainDateTime;
+	created_at?: Temporal.ZonedDateTime;
+	achieved_at?: Temporal.ZonedDateTime;
 	lift: Lift;
 	weight: number;
 	block_id: string;

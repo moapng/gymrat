@@ -254,5 +254,16 @@ export const getAllWorkouts = async (): Promise<supabaseWorkout[]> => {
 		handleError(error)
 	}
 
+	if (data) {
+		data.forEach(workout => {
+			if (workout.created_at) {
+				workout.created_at = Temporal.Instant.from(workout.created_at).toZonedDateTimeISO('Europe/Stockholm');
+			}
+			if (workout.achieved_at) {
+				workout.achieved_at = Temporal.Instant.from(workout.achieved_at).toZonedDateTimeISO('Europe/Stockholm');
+			}
+		});
+	}
+
 	return data as supabaseWorkout[];
 }

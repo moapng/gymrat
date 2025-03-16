@@ -6,28 +6,46 @@
 	import { onMount } from 'svelte';
 
 	let allWorkouts: supabaseWorkout[] = $state([]);
-
 	let timeFilter = $state('monthly');
-	let selectedLift = $state('all');
+	let selectedLift = $state(Lift.böj);
 	let chart: echarts.ECharts | null = null;
+	let showChart = $state(false);
+
+	const TIMEZONE = 'Europe/Stockholm';
+
+	let timeRanges = $state({
+		sevenDaysAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 7 }),
+		thirtyDaysAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 30 }),
+		yearAgo: Temporal.Now.zonedDateTimeISO(TIMEZONE).subtract({ days: 365 })
+	});
+
+	function formatDate(date: Temporal.ZonedDateTime | undefined): string {
+		if (!date) return '';
+		return date.toLocaleString('sv-SE', {
+			dateStyle: 'short',
+			timeStyle: 'short'
+		});
+	}
 
 	onMount(async () => {
 		allWorkouts = await getAllWorkouts();
 	});
+
 	const updateChart = () => {
 		if (chart) {
 			chart.dispose();
 		}
-		console.log(chart);
+
 		chart = echarts.init(document.getElementById('chart') as HTMLElement);
 		const filteredData = filterData(allWorkouts, timeFilter, selectedLift);
+
 		const option = {
 			tooltip: {
 				trigger: 'axis'
 			},
 			xAxis: {
 				type: 'category',
-				data: filteredData.map((d) => d.created_at),
+				data: filteredData.map((d) => formatDate(d.created_at)),
 				axisLabel: {
 					rotate: 45
 				}
@@ -62,62 +80,38 @@
 
 		chart.setOption(option);
 	};
+
 	const filterData = (data: supabaseWorkout[], timeFrame: string, lift: string) => {
-		if (!data) return [];
+		if (!data || !data.length) return [];
 
-		let filtered = [...data];
+		const filtered = data.filter((d) => d.lift === lift && d.created_at);
 
-		// Filter by lift type
-		if (lift !== 'all') {
-			filtered = filtered.filter((d) => d.lift === lift);
-		}
-
-		// Filter by time frame
-		const nowZoned = Temporal.Now.zonedDateTimeISO('Europe/Stockholm'); // Use Stockholm timezone
-		filtered = filtered.filter((d) => {
-			const workoutDate = d.created_at;
-			if (!workoutDate) return false;
-			const workoutTemporal = Temporal.Instant.from(workoutDate.toString()).toZonedDateTimeISO(
-				'Europe/Stockholm'
-			); // Convert to Stockholm time
-
-			// Calculate durations in days instead of weeks/months/years
-			const sevenDaysAgo = nowZoned.subtract({ days: 7 });
-			const thirtyDaysAgo = nowZoned.subtract({ days: 30 });
-			const threeSixtyFiveDaysAgo = nowZoned.subtract({ days: 365 });
+		const dateFiltered = filtered.filter((d) => {
+			if (!d.created_at) return false;
 
 			switch (timeFrame) {
 				case 'weekly':
-					return Temporal.ZonedDateTime.compare(workoutTemporal, sevenDaysAgo) >= 0;
+					return Temporal.ZonedDateTime.compare(d.created_at, timeRanges.sevenDaysAgo) >= 0;
 				case 'monthly':
-					return Temporal.ZonedDateTime.compare(workoutTemporal, thirtyDaysAgo) >= 0;
+					return Temporal.ZonedDateTime.compare(d.created_at, timeRanges.thirtyDaysAgo) >= 0;
 				case 'yearly':
-					return Temporal.ZonedDateTime.compare(workoutTemporal, threeSixtyFiveDaysAgo) >= 0;
+					return Temporal.ZonedDateTime.compare(d.created_at, timeRanges.yearAgo) >= 0;
 				default:
 					return true;
 			}
 		});
 
-		// Sort by date using Temporal
-		return filtered.sort((a, b) => {
+		return dateFiltered.sort((a, b) => {
 			if (!a.created_at || !b.created_at) return 0;
-			const aInstant = Temporal.Instant.from(a.created_at.toString()).toZonedDateTimeISO(
-				'Europe/Stockholm'
-			);
-			const bInstant = Temporal.Instant.from(b.created_at.toString()).toZonedDateTimeISO(
-				'Europe/Stockholm'
-			);
-			return Temporal.ZonedDateTime.compare(aInstant, bInstant);
+			return Temporal.ZonedDateTime.compare(a.created_at, b.created_at);
 		});
 	};
 
 	$effect(() => {
-		console.log(showChart);
 		if (showChart && (timeFilter || selectedLift)) {
 			updateChart();
 		}
 	});
-	let showChart = $state(true);
 </script>
 
 <div class="analytics-container w-full">
@@ -129,7 +123,6 @@
 		</select>
 
 		<select bind:value={selectedLift}>
-			<option value="all">All Lifts</option>
 			<option value="böj">{Lift.böj}</option>
 			<option value="bänk">{Lift.bänk}</option>
 			<option value="mark">{Lift.mark}</option>
@@ -155,15 +148,17 @@
 						<th>lyft</th>
 						<th>vikt</th>
 						<th>rating</th>
+						<th>kommentar</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each filterData(allWorkouts, timeFilter, selectedLift) as workout}
 						<tr>
-							<td>{workout.created_at}</td>
+							<td>{formatDate(workout.created_at)}</td>
 							<td>{workout.lift}</td>
 							<td>{workout.weight}</td>
 							<td>{workout.workout_rating}</td>
+							<td>{workout.comment}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -193,7 +188,6 @@
 	#chart {
 		height: 300px;
 	}
-	/* Table container with fixed height and scroll */
 	.table-container {
 		height: 300px;
 		overflow: hidden;

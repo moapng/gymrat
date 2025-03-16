@@ -100,3 +100,9 @@ export enum ToastType {
 	error = 'error',
 	success = 'success'
 }
+
+export enum TableTimeToggle {
+	latest_week = "senaste veckan",
+	latest_month = "senaste månaden",
+	latest_year = "senaste året",
+}

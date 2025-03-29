@@ -211,7 +211,7 @@
 								ontouchstart={(e) => showCommentTooltip(e, workout.comment)}
 							>
 								<span class="comment-text">{workout.comment}</span>
-								{#if workout.comment && workout.comment.length > 10}
+								{#if workout.comment && workout.comment.length > 3}
 									<span class="tooltip-indicator">👆</span>
 								{/if}
 							</td>

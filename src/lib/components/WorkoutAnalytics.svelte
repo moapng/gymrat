@@ -153,30 +153,26 @@
 </script>
 
 <div class="analytics-container w-full">
-	<div class="filters">
-		<select bind:value={timeFilter}>
-			<option value={TableTimeToggle.latest_week}>{TableTimeToggle.latest_week}</option>
-			<option value={TableTimeToggle.latest_month}>{TableTimeToggle.latest_month}</option>
-			<option value={TableTimeToggle.latest_year}>{TableTimeToggle.latest_year}</option>
-		</select>
-
-		<select bind:value={selectedLift}>
-			<option value="böj">{Lift.böj}</option>
-			<option value="bänk">{Lift.bänk}</option>
-			<option value="mark">{Lift.mark}</option>
-		</select>
-	</div>
-
-	<div class="view-toggle">
+	<div class="view-toggles">
 		<label class="cute-switch">
 			<input type="checkbox" bind:checked={showChart} />
 			<span class="slider">
-				<span class="slider-icon">
+				<span class="slider-icon" class:is-right={!showChart}>
 					{#if showChart}📊{:else}📋{/if}
 				</span>
 			</span>
 		</label>
-		<span class="toggle-label">{showChart ? 'Visa tabell' : 'Visa graf'}</span>
+			<select bind:value={timeFilter}>
+				<option value={TableTimeToggle.latest_week}>{TableTimeToggle.latest_week}</option>
+				<option value={TableTimeToggle.latest_month}>{TableTimeToggle.latest_month}</option>
+				<option value={TableTimeToggle.latest_year}>{TableTimeToggle.latest_year}</option>
+			</select>
+	
+			<select bind:value={selectedLift}>
+				<option value="böj">{Lift.böj}</option>
+				<option value="bänk">{Lift.bänk}</option>
+				<option value="mark">{Lift.mark}</option>
+			</select>
 	</div>
 
 	{#if showChart}
@@ -215,11 +211,6 @@
 		flex-direction: column;
 		gap: 2rem;
 		padding: 1rem;
-	}
-
-	.filters {
-		display: flex;
-		gap: 1rem;
 	}
 
 	table {
@@ -288,7 +279,7 @@
 		color: #cccccc;
 	}
 
-	.view-toggle {
+	.view-toggles {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -345,6 +336,9 @@
 		color: #cccccc;
 		transition: 0.3s;
 	}
+	.slider-icon.is-right {
+		transform: translateX(40%) translateY(-50%);
+	}
 
 	input:checked + .slider {
 		background: #253238;
@@ -354,12 +348,5 @@
 	input:checked + .slider:before {
 		transform: translateX(30px);
 		background-color: #ff9db6;
-	}
-
-	.toggle-label {
-		font-weight: 400;
-		user-select: none;
-		margin-left: 8px;
-		color: #cccccc;
 	}
 </style>

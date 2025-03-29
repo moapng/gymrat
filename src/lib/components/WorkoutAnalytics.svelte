@@ -5,6 +5,8 @@
 	import * as echarts from 'echarts';
 	import { onMount } from 'svelte';
 	import { formatDate, getDateRanges } from '$lib/temporal-service';
+	import { showPopper } from '$lib/stores/popper.svelte';
+	import CommentTooltip from './CommentTooltip.svelte';
 
 	let allWorkouts: supabaseWorkout[] = $state([]);
 	let timeFilter = $state(TableTimeToggle.latest_month);
@@ -144,6 +146,13 @@
 				: Temporal.ZonedDateTime.compare(b.created_at, a.created_at);
 		});
 	};
+	
+	const showCommentTooltip = (event: Event, comment: string) => {
+		if (comment) {
+			const target = event.currentTarget as HTMLElement;
+			showPopper(target, CommentTooltip, { comment });
+		}
+	};
 
 	$effect(() => {
 		if (showChart && (timeFilter || selectedLift)) {
@@ -196,7 +205,16 @@
 							<td>{workout.lift}</td>
 							<td>{workout.weight}</td>
 							<td>{workout.workout_rating}</td>
-							<td>{workout.comment}</td>
+							<td 
+								class="comment-cell" 
+								onclick={(e) => showCommentTooltip(e, workout.comment)}
+								ontouchstart={(e) => showCommentTooltip(e, workout.comment)}
+							>
+								<span class="comment-text">{workout.comment}</span>
+								{#if workout.comment && workout.comment.length > 10}
+									<span class="tooltip-indicator">👆</span>
+								{/if}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -259,6 +277,28 @@
 		text-align: left;
 		color: #cccccc;
 	}
+	
+	.comment-cell {
+		position: relative;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	
+	.comment-text {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: calc(100% - 20px);
+	}
+	
+	.tooltip-indicator {
+		font-size: 0.8rem;
+		opacity: 0.7;
+		margin-left: 4px;
+	}
+	
 
 	select {
 		padding: 0.5rem;

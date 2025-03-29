@@ -40,8 +40,8 @@
 </script>
 
 <div class="grid grid-cols-2 px-3">
-	<input class="w-4" type="text" inputmode="numeric" bind:value={weight} />
-	<input class="w-4" type="text" inputmode="numeric" bind:value={repetitions} />
+	<input class="w-6" type="text" inputmode="numeric" bind:value={weight} />
+	<input class="w-6" type="text" inputmode="numeric" bind:value={repetitions} />
 
 	<select bind:value={lift}>
 		<option value={Lift.böj}>{Lift.böj}</option>

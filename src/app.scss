@@ -1,5 +1,9 @@
 @use 'variables.scss' as *;
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Courier New', monospace;
   font-size: 14px;
@@ -13,6 +17,26 @@ body {
   background-color: $background-color;
   color: $text-color;
   line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+// scan line background
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, $scanline-opacity),
+      rgba(0, 0, 0, $scanline-opacity) $scanline-height,
+      transparent $scanline-height,
+      transparent $scanline-height * 2);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
 }
 
 dl,
@@ -23,17 +47,24 @@ dt {
 }
 
 button {
-  border: 2px solid $border-color;
+  border: $pixel-border-width solid $border-color;
   background: $background-color;
   color: $text-color;
   font-family: 'Courier New', monospace;
   padding: $padding;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: $pixel-shadow;
 
   &:hover {
     background: $border-color;
     color: $background-color;
+    box-shadow: 6px 6px 0 $shadow-color;
+  }
+
+  &:active {
+    transform: translate(0px, 0px);
+    box-shadow: 2px 2px 0 $shadow-color;
   }
 }
 
@@ -42,18 +73,19 @@ select,
 option {
   background-color: $background-color;
   color: $text-color;
-  border: 2px solid $border-color;
+  border: $pixel-border-width solid $border-color;
   border-radius: $border-radius;
   font-family: 'Courier New', monospace;
   padding: $padding;
   outline: none;
+  transition: all 0.2s ease;
 
   &:focus {
     border-color: $primary-color;
+    box-shadow: $retro-glow;
   }
 }
 
-// Retro-style scrollbar
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -61,9 +93,14 @@ option {
 
 ::-webkit-scrollbar-track {
   background: $background-color;
+  border-left: 1px solid rgba($border-color, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
   background: $border-color;
   border: 2px solid $background-color;
+
+  &:hover {
+    background: $primary-color;
+  }
 }

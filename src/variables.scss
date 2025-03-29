@@ -11,3 +11,16 @@ $shadow-color: rgba(0, 0, 0, 0.3);
 
 $glass-background: rgba(37, 50, 56, 0.8);
 $glass-blur: 5px;
+
+$pixel-border-width: 2px;
+$grid-gap: 1rem;
+$retro-glow: 0 0 5px rgba($primary-color, 0.6);
+
+// Terminal scanline variables
+$scanline-height: 2px;
+$scanline-opacity: 0.15;
+
+// Retro box shadows
+$pixel-shadow: 4px 4px 0 $shadow-color;
+$inset-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.1),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.2);

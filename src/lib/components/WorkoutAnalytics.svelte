@@ -4,7 +4,7 @@
 	import { Temporal } from '@js-temporal/polyfill';
 	import * as echarts from 'echarts';
 	import { onMount } from 'svelte';
-	import { formatDate, getDateRanges, DEFAULT_TIMEZONE } from '$lib/temporal-service';
+	import { formatDate, getDateRanges } from '$lib/temporal-service';
 
 	let allWorkouts: supabaseWorkout[] = $state([]);
 	let timeFilter = $state(TableTimeToggle.latest_month);
@@ -341,7 +341,6 @@
 		display: flex;
 		justify-content: space-between;
 		padding: 0 8px;
-		box-sizing: border-box;
 		font-size: 14px;
 		color: #cccccc;
 		transition: 0.3s;

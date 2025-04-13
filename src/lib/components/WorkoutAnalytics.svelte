@@ -2,16 +2,20 @@
 	import { getAllWorkouts } from '$lib/api';
 	import { Lift, TableTimeToggle, type supabaseWorkout } from '$lib/interfaces';
 	import { Temporal } from '@js-temporal/polyfill';
-	import * as echarts from 'echarts';
 	import { onMount } from 'svelte';
-	import { formatDate, getDateRanges } from '$lib/temporal-service';
-	import { showPopper } from '$lib/stores/popper.svelte';
-	import CommentTooltip from './CommentTooltip.svelte';
+	import { getDateRanges } from '$lib/temporal-service';
+	import Table from './Table.svelte';
+	import Chart from './Chart.svelte';
 
 	let allWorkouts: supabaseWorkout[] = $state([]);
-	let timeFilter = $state(TableTimeToggle.latest_month);
-	let selectedLift = $state(Lift.böj);
-	let chart: echarts.ECharts | null = null;
+	let timeFilter = $state(
+		localStorage.getItem('timeFilter')
+			? JSON.parse(localStorage.getItem('timeFilter')!)
+			: TableTimeToggle.latest_month
+	);
+	let liftFilter = $state(
+		localStorage.getItem('liftFilter') ? JSON.parse(localStorage.getItem('liftFilter')!) : Lift.böj
+	);
 	let showChart = $state(false);
 
 	let timeRanges = $state(getDateRanges());
@@ -20,102 +24,18 @@
 		allWorkouts = await getAllWorkouts();
 	});
 
-	const updateChart = () => {
-		if (chart) {
-			chart.dispose();
-		}
+	$effect(() => {
+		localStorage.setItem('timeFilter', JSON.stringify(timeFilter));
+		localStorage.setItem('liftFilter', JSON.stringify(liftFilter));
+		const timeFilterLocalStorage = localStorage.getItem('timeFilter');
+		timeFilter = timeFilterLocalStorage
+			? JSON.parse(timeFilterLocalStorage)
+			: TableTimeToggle.latest_month;
 
-		chart = echarts.init(document.getElementById('chart') as HTMLElement);
-		const filteredData = filterData(allWorkouts, timeFilter, selectedLift);
-
-		const option = {
-			backgroundColor: '#253238',
-			tooltip: {
-				trigger: 'axis',
-				backgroundColor: '#253238',
-				borderColor: '#9ADBD6',
-				textStyle: {
-					color: '#CCCCCC',
-					fontFamily: 'Courier New, monospace'
-				}
-			},
-			xAxis: {
-				type: 'category',
-				data: filteredData.map((d) => formatDate(d.created_at)),
-				axisLabel: {
-					rotate: 45,
-					color: '#CCCCCC',
-					fontFamily: 'Courier New, monospace'
-				},
-				axisLine: {
-					lineStyle: {
-						color: '#9ADBD6'
-					}
-				},
-				splitLine: {
-					show: true,
-					lineStyle: {
-						color: '#9ADBD6',
-						opacity: 0.3
-					}
-				}
-			},
-			yAxis: {
-				type: 'value',
-				name: 'vikt (kg)',
-				nameTextStyle: {
-					color: '#CCCCCC',
-					fontFamily: 'Courier New, monospace'
-				},
-				axisLabel: {
-					color: '#CCCCCC',
-					fontFamily: 'Courier New, monospace'
-				},
-				axisLine: {
-					lineStyle: {
-						color: '#9ADBD6'
-					}
-				},
-				splitLine: {
-					lineStyle: {
-						color: '#9ADBD6',
-						opacity: 0.3
-					}
-				}
-			},
-			series: [
-				{
-					name: 'vikt (kg)',
-					type: 'line',
-					data: filteredData.map((d) => d.weight),
-					smooth: false,
-					symbol: 'rect',
-					symbolSize: 8,
-					lineStyle: {
-						color: '#FF9DB6',
-						width: 4
-					},
-					itemStyle: {
-						color: '#FF9DB6',
-						borderColor: '#9ADBD6',
-						borderWidth: 2
-					},
-					markPoint: {
-						data: [
-							{ type: 'max', name: 'Maximum', itemStyle: { color: '#D09ED3' } },
-							{ type: 'min', name: 'Minimum', itemStyle: { color: '#A7BDEF' } }
-						],
-						label: {
-							color: '#253238',
-							fontFamily: 'Courier New, monospace'
-						}
-					}
-				}
-			]
-		};
-
-		chart.setOption(option);
-	};
+		const liftFilterLocalStorage = localStorage.getItem('liftFilter');
+		liftFilter = liftFilterLocalStorage ? JSON.parse(liftFilterLocalStorage) : Lift.böj;
+		console.log(liftFilter);
+	});
 
 	const filterData = (data: supabaseWorkout[], timeFrame: TableTimeToggle, lift: string) => {
 		if (!data || !data.length) return [];
@@ -146,19 +66,6 @@
 				: Temporal.ZonedDateTime.compare(b.created_at, a.created_at);
 		});
 	};
-	
-	const showCommentTooltip = (event: Event, comment: string) => {
-		if (comment) {
-			const target = event.currentTarget as HTMLElement;
-			showPopper(target, CommentTooltip, { comment });
-		}
-	};
-
-	$effect(() => {
-		if (showChart && (timeFilter || selectedLift)) {
-			updateChart();
-		}
-	});
 </script>
 
 <div class="analytics-container w-full">
@@ -171,55 +78,23 @@
 				</span>
 			</span>
 		</label>
-			<select bind:value={timeFilter}>
-				<option value={TableTimeToggle.latest_week}>{TableTimeToggle.latest_week}</option>
-				<option value={TableTimeToggle.latest_month}>{TableTimeToggle.latest_month}</option>
-				<option value={TableTimeToggle.latest_year}>{TableTimeToggle.latest_year}</option>
-			</select>
-	
-			<select bind:value={selectedLift}>
-				<option value="böj">{Lift.böj}</option>
-				<option value="bänk">{Lift.bänk}</option>
-				<option value="mark">{Lift.mark}</option>
-			</select>
+		<select bind:value={timeFilter}>
+			<option value={TableTimeToggle.latest_week}>{TableTimeToggle.latest_week}</option>
+			<option value={TableTimeToggle.latest_month}>{TableTimeToggle.latest_month}</option>
+			<option value={TableTimeToggle.latest_year}>{TableTimeToggle.latest_year}</option>
+		</select>
+
+		<select bind:value={liftFilter}>
+			<option value="böj">{Lift.böj}</option>
+			<option value="bänk">{Lift.bänk}</option>
+			<option value="mark">{Lift.mark}</option>
+		</select>
 	</div>
 
 	{#if showChart}
-		<div id="chart" class="w-full h-40"></div>
+		<Chart {showChart} {filterData} {allWorkouts} {timeFilter} {liftFilter} />
 	{:else}
-		<div class="table-container">
-			<table>
-				<thead>
-					<tr>
-						<th>datum</th>
-						<th>lyft</th>
-						<th>vikt</th>
-						<th>rating</th>
-						<th>kommentar</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each filterData(allWorkouts, timeFilter, selectedLift) as workout}
-						<tr>
-							<td>{formatDate(workout.created_at)}</td>
-							<td>{workout.lift}</td>
-							<td>{workout.weight}</td>
-							<td>{workout.workout_rating}</td>
-							<td 
-								class="comment-cell" 
-								onclick={(e) => showCommentTooltip(e, workout.comment)}
-								ontouchstart={(e) => showCommentTooltip(e, workout.comment)}
-							>
-								<span class="comment-text">{workout.comment}</span>
-								{#if workout.comment && workout.comment.length > 3}
-									<span class="tooltip-indicator">👆</span>
-								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+		<Table {filterData} {allWorkouts} {timeFilter} {liftFilter} />
 	{/if}
 </div>
 
@@ -230,75 +105,6 @@
 		gap: 2rem;
 		padding: 1rem;
 	}
-
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		border-spacing: 0;
-		border: 2px solid #9adbd6;
-	}
-
-	#chart {
-		height: 300px;
-		border: 2px solid #9adbd6;
-		background: #253238;
-	}
-
-	.table-container {
-		height: 300px;
-		overflow: hidden;
-		position: relative;
-		background: #253238;
-	}
-
-	thead {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-		background: #253238;
-	}
-
-	tbody {
-		display: block;
-		overflow-y: auto;
-		height: calc(300px - 2.5rem); /* Subtract header height */
-	}
-
-	tr {
-		display: table;
-		width: 100%;
-		table-layout: fixed;
-		border-bottom: 1px solid #9adbd6;
-	}
-
-	th,
-	td {
-		padding: 0.5rem;
-		text-align: left;
-		color: #cccccc;
-	}
-	
-	.comment-cell {
-		position: relative;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-	
-	.comment-text {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: calc(100% - 20px);
-	}
-	
-	.tooltip-indicator {
-		font-size: 0.8rem;
-		opacity: 0.7;
-		margin-left: 4px;
-	}
-	
 
 	select {
 		padding: 0.5rem;

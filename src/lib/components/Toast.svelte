@@ -18,7 +18,7 @@
 <style>
 	.toast {
 		position: absolute;
-		bottom: 1rem;
+		bottom: 4rem;
 		left: 50%;
 		transform: translateX(-50%);
 		padding: 1rem;
